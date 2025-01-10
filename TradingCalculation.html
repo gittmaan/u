@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Calculation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background-color: #1A1A1A;
+            color: #FFFFFF;
+        }
+        h1 {
+            text-align: center;
+            color: #00BFFF;
+        }
+        form {
+            background-color: #2B2B2B;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        .input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        input[type="number"] {
+            width: calc(100% - 30px);
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .unit {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+        button {
+            background-color: #00BFFF;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #008CBA;
+        }
+        #result {
+            background-color: #2B2B2B;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #444;
+        }
+        .summary {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trading Calculation</h1>
+    <form id="tradingForm">
+        <label>Initial PCS:</label>
+        <div class="input-wrapper">
+            <input type="number" name="initialPcs" value="5800" required>
+            <span class="unit">pcs</span>
+        </div>
+
+        <label>Leverage:</label>
+        <div class="input-wrapper">
+            <input type="number" name="leverage" value="10" required>
+            <span class="unit">X</span>
+        </div>
+
+        <label>Profit Percentage:</label>
+        <div class="input-wrapper">
+            <input type="number" name="profitPercentage" value="50" required>
+            <span class="unit">%</span>
+        </div>
+
+        <label>Fee Percentage:</label>
+        <div class="input-wrapper">
+            <input type="number" name="feePercentage" value="12" required>
+            <span class="unit">%</span>
+        </div>
+
+        <button type="button" onclick="calculateTrades()">Calculate</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        function calculateTrades() {
+            const form = document.getElementById('tradingForm');
+            const initialPcs = parseFloat(form.initialPcs.value);
+            const leverage = parseFloat(form.leverage.value);
+            const profitPercentage = parseFloat(form.profitPercentage.value) / 100;
+            const feePercentage = parseFloat(form.feePercentage.value) / 100;
+
+            let currentPcs = initialPcs;
+            const tradeAmount = initialPcs * 0.1;
+            const leveragedAmount = tradeAmount * leverage;
+            const profitAmount = leveragedAmount * profitPercentage;
+            const feeAmount = leveragedAmount * feePercentage;
+            const netProfitUSDT = profitAmount - feeAmount;
+            const netProfitPcs = netProfitUSDT / leverage;
+
+            let trades = [];
+            while (currentPcs < initialPcs * 2) {
+                trades.push({
+                    tradeNumber: trades.length + 1,
+                    startingPcs: currentPcs.toFixed(2),
+                    endingPcs: (currentPcs + netProfitPcs).toFixed(2),
+                    fee: feeAmount.toFixed(2),
+                    pnl: netProfitUSDT.toFixed(2)
+                });
+                currentPcs += netProfitPcs;
+            }
+
+            let tableHtml = `
+                <h2>Results</h2>
+                <p class="summary">It will take ${trades.length} trades to double the initial amount of ${initialPcs} PCS.</p>
+                <table>
+                    <tr>
+                        <th>Trade #</th>
+                        <th>Starting PCS</th>
+                        <th>Ending PCS</th>
+                        <th>Fee (USDT)</th>
+                        <th>P&L (USDT)</th>
+                    </tr>
+            `;
+
+            trades.forEach(trade => {
+                tableHtml += `
+                    <tr>
+                        <td>${trade.tradeNumber}</td>
+                        <td>${trade.startingPcs}</td>
+                        <td>${trade.endingPcs}</td>
+                        <td>${trade.fee}</td>
+                        <td>${trade.pnl}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += '</table>';
+            document.getElementById('result').innerHTML = tableHtml;
+        }
+    </script>
+</body>
+</html>

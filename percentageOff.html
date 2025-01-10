@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Percent-off Calculator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #1e3a5f;
+        color: #ffffff;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+        color: #64b5f6;
+      }
+      .input-group,
+      .result-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        background-color: #2c4d6e;
+        border: none;
+        color: #ff9800;
+      }
+      .result {
+        background-color: #2c4d6e;
+        padding: 8px;
+        margin-top: 5px;
+      }
+      #details {
+        background-color: #2c4d6e;
+        padding: 15px;
+        margin-top: 20px;
+      }
+      .highlight {
+        color: #ff9800;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Percent-off Calculator</h1>
+    <div class="input-group">
+      <label for="orig_price">Original price: $</label>
+      <input type="number" id="orig_price" step="0.01" />
+    </div>
+    <div class="input-group">
+      <label for="discount_percent">Discount percentage:</label>
+      <input type="number" id="discount_percent" step="0.1" />
+    </div>
+    <div class="input-group">
+      <label for="fees">Fees:</label>
+      <select id="fees">
+        <option value="0">0%</option>
+        <option value="2.5">2.5%</option>
+        <option value="6">6%</option>
+      </select>
+    </div>
+    <div class="result-group">
+      <label>Discount:</label>
+      <div id="discount" class="result"></div>
+    </div>
+    <div class="result-group">
+      <label>Final Price:</label>
+      <div id="final_price" class="result"></div>
+    </div>
+    <div id="details"></div>
+
+    <script>
+      const CURRENCY = "USD";
+      const LOCALE = "en-US";
+
+      function formatCurrency(amount, decimalPlaces, currency, locale) {
+        return new Intl.NumberFormat(locale, {
+          style: "currency",
+          currency: currency,
+          minimumFractionDigits: decimalPlaces,
+          maximumFractionDigits: decimalPlaces,
+        }).format(amount);
+      }
+
+      function roundNumber(number, decimalPlaces) {
+        return (
+          Math.round(number * Math.pow(10, decimalPlaces)) /
+          Math.pow(10, decimalPlaces)
+        );
+      }
+
+      function calculate() {
+        const originalPrice = parseFloat(
+          document.getElementById("orig_price").value
+        );
+        const discountPercent = parseFloat(
+          document.getElementById("discount_percent").value
+        );
+        const feePercent = parseFloat(document.getElementById("fees").value);
+
+        if (
+          isNaN(originalPrice) ||
+          isNaN(discountPercent) ||
+          isNaN(feePercent)
+        ) {
+          return;
+        }
+
+        const discountRate = discountPercent / 100;
+        const feesRate = (feePercent * 2) / 100; // Multiply fees by 2
+
+        const discountAmount = roundNumber(
+          (discountRate - feesRate) * originalPrice,
+          2
+        );
+        const formattedDiscount = formatCurrency(
+          discountAmount,
+          2,
+          CURRENCY,
+          LOCALE
+        );
+        const finalPrice = roundNumber(originalPrice - discountAmount, 2);
+        const formattedFinalPrice = formatCurrency(
+          finalPrice,
+          2,
+          CURRENCY,
+          LOCALE
+        );
+
+        let detailsOutput = `
+                <p>Discount = (Original Price × (Discount % - Fees))<br>
+                Discount = (${originalPrice} × (${discountPercent} - ${
+          feePercent * 2
+        })/100)<br>
+                Discount = ${originalPrice} × ${discountRate - feesRate}<br>
+                <span class="highlight">You save = ${formattedDiscount}</span></p>
+                <p>Final Price = Original Price - Discount<br>
+                Final Price = ${originalPrice} - ${discountAmount}<br>
+                <span class="highlight">Final Price = ${formattedFinalPrice}</span></p>
+            `;
+
+        document.getElementById("discount").textContent = formattedDiscount;
+        document.getElementById("final_price").textContent =
+          formattedFinalPrice;
+        document.getElementById("details").innerHTML = detailsOutput;
+      }
+
+      document
+        .getElementById("orig_price")
+        .addEventListener("input", calculate);
+      document
+        .getElementById("discount_percent")
+        .addEventListener("input", calculate);
+      document.getElementById("fees").addEventListener("change", calculate);
+    </script>
+  </body>
+</html>
