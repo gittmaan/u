@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdrawal Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .calculator {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #5f6368;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #dadce0;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #1557b0;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .result h2 {
+            color: #1a73e8;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .result p {
+            color: #3c4043;
+            font-size: 1.1rem;
+            margin: 0.5rem 0;
+        }
+
+        .error {
+            color: #dc3545;
+            margin-top: 0.5rem;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Withdrawal Calculator</h1>
+
+        <div class="input-group">
+            <label for="balance">Current Balance:</label>
+            <input type="number" id="balance" placeholder="Enter your balance" step="0.01">
+        </div>
+
+        <div class="input-group">
+            <label for="fee">Withdrawal Fee (%):</label>
+            <input type="number" id="fee" value="1" step="0.01" min="0">
+        </div>
+
+        <button onclick="calculateWithdrawal()">Calculate Maximum Withdrawal</button>
+
+        <div class="result" id="result">
+            <h2>Calculation Results</h2>
+            <p>Maximum Withdrawal: <span id="withdrawalAmount">-</span></p>
+            <p>Fee Deducted: <span id="feeAmount">-</span></p>
+            <p>Remaining Balance: <span id="remainingBalance">-</span></p>
+        </div>
+
+        <div class="error" id="error">
+            Please enter valid numbers (Balance > 0 and Fee ≥ 0)!
+        </div>
+    </div>
+
+    <script>
+        function calculateWithdrawal() {
+            // Get elements
+            const balanceInput = document.getElementById('balance');
+            const feeInput = document.getElementById('fee');
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('error');
+            const withdrawalSpan = document.getElementById('withdrawalAmount');
+            const feeSpan = document.getElementById('feeAmount');
+            const remainingSpan = document.getElementById('remainingBalance');
+
+            // Reset styles and messages
+            errorDiv.style.display = 'none';
+            balanceInput.style.borderColor = '#dadce0';
+            feeInput.style.borderColor = '#dadce0';
+
+            // Validate inputs
+            const balance = parseFloat(balanceInput.value);
+            const feePercentage = parseFloat(feeInput.value);
+
+            let isValid = true;
+            if (isNaN(balance) || balance <= 0) {
+                balanceInput.style.borderColor = '#dc3545';
+                isValid = false;
+            }
+            if (isNaN(feePercentage) || feePercentage < 0) {
+                feeInput.style.borderColor = '#dc3545';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Calculate values
+            const withdrawal = balance / (1 + feePercentage/100);
+            const fee = withdrawal * (feePercentage/100);
+            const remaining = balance - (withdrawal + fee);
+
+            // Display results
+            withdrawalSpan.textContent = withdrawal.toFixed(2);
+            feeSpan.textContent = fee.toFixed(2);
+            remainingSpan.textContent = Math.max(remaining, 0).toFixed(2);
+
+            // Show results
+            resultDiv.style.display = 'block';
+        }
+
+        // Add enter key support
+        document.getElementById('balance').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculateWithdrawal();
+        });
+        document.getElementById('fee').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculateWithdrawal();
+        });
+    </script>
+</body>
+</html>
