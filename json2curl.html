@@ -53,6 +53,13 @@
         border: 1px solid #ccc;
         border-radius: 5px;
       }
+      .copy-button {
+        margin-top: 10px;
+        background-color: #28a745;
+      }
+      .copy-button:hover {
+        background-color: #218838;
+      }
     </style>
   </head>
   <body>
@@ -62,6 +69,9 @@
 
     <h2>Generated cURL Command:</h2>
     <pre id="curlCommand"></pre>
+    <button class="copy-button" onclick="copyCurlCommand()">
+      Copy cURL Command
+    </button>
 
     <h2>API Response:</h2>
     <div class="response" id="apiResponse"></div>
@@ -69,11 +79,14 @@
     <script>
       function sendRequest() {
         const jsonInput = document.getElementById("jsonInput").value;
+        console.log("Raw Input:", jsonInput); // Debugging: Log the raw input
+
         let jsonData;
         try {
           jsonData = JSON.parse(jsonInput);
         } catch (e) {
           alert("Invalid JSON! Please check your input.");
+          console.error("JSON Parsing Error:", e); // Debugging: Log the error
           return;
         }
 
@@ -106,6 +119,18 @@
             document.getElementById(
               "apiResponse"
             ).textContent = `Error: ${error.message}`;
+          });
+      }
+
+      function copyCurlCommand() {
+        const curlCommand = document.getElementById("curlCommand").textContent;
+        navigator.clipboard
+          .writeText(curlCommand)
+          .then(() => {
+            alert("cURL command copied to clipboard!");
+          })
+          .catch((error) => {
+            alert("Failed to copy cURL command: " + error.message);
           });
       }
     </script>
