@@ -92,13 +92,19 @@
 
         const { method, url, headers, data } = jsonData;
 
-        // Generate the cURL command
+        // Generate the cURL command with proper formatting
         const curlHeaders = Object.entries(headers)
-          .map(([key, value]) => `-H "${key}: ${value}"`)
-          .join(" ");
-        const curlCommand = `curl -X ${method} "${url}" ${curlHeaders} -d '${JSON.stringify(
-          data
-        )}'`;
+          .map(([key, value]) => `--header '${key}: ${value}'`)
+          .join(" \\\n  "); // Add line breaks and indentation for headers
+
+        const curlData = JSON.stringify(data, null, 2) // Pretty-print the JSON data
+          .split("\n") // Split into lines
+          .map((line, index) => (index === 0 ? line : `  ${line}`)) // Indent all lines except the first
+          .join(" \\\n  "); // Add line breaks and indentation
+
+        const curlCommand = `curl --location '${url}' \\\n  ${curlHeaders} \\\n  --data '${curlData}'`;
+
+        // Display the formatted cURL command
         document.getElementById("curlCommand").textContent = curlCommand;
 
         // Send the request using fetch
