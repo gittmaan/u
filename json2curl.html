@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON to cURL Converter</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f9;
+        color: #333;
+      }
+      h1 {
+        color: #444;
+      }
+      textarea {
+        width: 100%;
+        height: 300px;
+        padding: 10px;
+        font-family: monospace;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        resize: vertical;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      pre {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #282c34;
+        color: #abb2bf;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      .response {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #e9ecef;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>JSON to cURL Converter</h1>
+    <textarea id="jsonInput" placeholder="Paste your JSON here..."></textarea>
+    <button onclick="sendRequest()">Send Request</button>
+
+    <h2>Generated cURL Command:</h2>
+    <pre id="curlCommand"></pre>
+
+    <h2>API Response:</h2>
+    <div class="response" id="apiResponse"></div>
+
+    <script>
+      function sendRequest() {
+        const jsonInput = document.getElementById("jsonInput").value;
+        let jsonData;
+        try {
+          jsonData = JSON.parse(jsonInput);
+        } catch (e) {
+          alert("Invalid JSON! Please check your input.");
+          return;
+        }
+
+        const { method, url, headers, data } = jsonData;
+
+        // Generate the cURL command
+        const curlHeaders = Object.entries(headers)
+          .map(([key, value]) => `-H "${key}: ${value}"`)
+          .join(" ");
+        const curlCommand = `curl -X ${method} "${url}" ${curlHeaders} -d '${JSON.stringify(
+          data
+        )}'`;
+        document.getElementById("curlCommand").textContent = curlCommand;
+
+        // Send the request using fetch
+        fetch(url, {
+          method: method,
+          headers: headers,
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("apiResponse").textContent = JSON.stringify(
+              data,
+              null,
+              2
+            );
+          })
+          .catch((error) => {
+            document.getElementById(
+              "apiResponse"
+            ).textContent = `Error: ${error.message}`;
+          });
+      }
+    </script>
+  </body>
+</html>
