@@ -60,6 +60,12 @@
       .copy-button:hover {
         background-color: #218838;
       }
+      .output-container {
+        margin-top: 20px;
+      }
+      .output-container h2 {
+        margin-bottom: 10px;
+      }
     </style>
   </head>
   <body>
@@ -67,11 +73,27 @@
     <textarea id="jsonInput" placeholder="Paste your JSON here..."></textarea>
     <button onclick="sendRequest()">Send Request</button>
 
-    <h2>Generated cURL Command:</h2>
-    <pre id="curlCommand"></pre>
-    <button class="copy-button" onclick="copyCurlCommand()">
-      Copy cURL Command
-    </button>
+    <div class="output-container">
+      <h2>Generated cURL Command (with \):</h2>
+      <pre id="curlCommandWithSlash"></pre>
+      <button
+        class="copy-button"
+        onclick="copyCurlCommand('curlCommandWithSlash')"
+      >
+        Copy cURL Command
+      </button>
+    </div>
+
+    <div class="output-container">
+      <h2>Generated cURL Command (without \):</h2>
+      <pre id="curlCommandWithoutSlash"></pre>
+      <button
+        class="copy-button"
+        onclick="copyCurlCommand('curlCommandWithoutSlash')"
+      >
+        Copy cURL Command
+      </button>
+    </div>
 
     <h2>API Response:</h2>
     <div class="response" id="apiResponse"></div>
@@ -92,20 +114,35 @@
 
         const { method, url, headers, data } = jsonData;
 
-        // Generate the cURL command with proper formatting
-        const curlHeaders = Object.entries(headers)
+        // Generate the cURL command with \ and newlines
+        const curlHeadersWithSlash = Object.entries(headers)
           .map(([key, value]) => `--header '${key}: ${value}'`)
           .join(" \\\n  "); // Add line breaks and indentation for headers
 
-        const curlData = JSON.stringify(data, null, 2) // Pretty-print the JSON data
+        const curlDataWithSlash = JSON.stringify(data, null, 2) // Pretty-print the JSON data
           .split("\n") // Split into lines
           .map((line, index) => (index === 0 ? line : `  ${line}`)) // Indent all lines except the first
           .join(" \\\n  "); // Add line breaks and indentation
 
-        const curlCommand = `curl --location '${url}' \\\n  ${curlHeaders} \\\n  --data '${curlData}'`;
+        const curlCommandWithSlash = `curl --location '${url}' \\\n  ${curlHeadersWithSlash} \\\n  --data '${curlDataWithSlash}'`;
 
-        // Display the formatted cURL command
-        document.getElementById("curlCommand").textContent = curlCommand;
+        // Generate the cURL command without \ but with newlines
+        const curlHeadersWithoutSlash = Object.entries(headers)
+          .map(([key, value]) => `--header '${key}: ${value}'`)
+          .join("\n  "); // Add line breaks and indentation for headers
+
+        const curlDataWithoutSlash = JSON.stringify(data, null, 2) // Pretty-print the JSON data
+          .split("\n") // Split into lines
+          .map((line, index) => (index === 0 ? line : `  ${line}`)) // Indent all lines except the first
+          .join("\n  "); // Add line breaks and indentation
+
+        const curlCommandWithoutSlash = `curl --location '${url}'\n  ${curlHeadersWithoutSlash}\n  --data '${curlDataWithoutSlash}'`;
+
+        // Display the formatted cURL commands
+        document.getElementById("curlCommandWithSlash").textContent =
+          curlCommandWithSlash;
+        document.getElementById("curlCommandWithoutSlash").textContent =
+          curlCommandWithoutSlash;
 
         // Send the request using fetch
         fetch(url, {
@@ -128,8 +165,8 @@
           });
       }
 
-      function copyCurlCommand() {
-        const curlCommand = document.getElementById("curlCommand").textContent;
+      function copyCurlCommand(elementId) {
+        const curlCommand = document.getElementById(elementId).textContent;
         navigator.clipboard
           .writeText(curlCommand)
           .then(() => {
