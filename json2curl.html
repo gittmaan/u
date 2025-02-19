@@ -124,7 +124,7 @@
           .map((line, index) => (index === 0 ? line : `  ${line}`)) // Indent all lines except the first
           .join(" \\\n  "); // Add line breaks and indentation
 
-        const curlCommandWithSlash = `curl --location '${url}' \\\n  ${curlHeadersWithSlash} \\\n  --data '${curlDataWithSlash}'`;
+        const curlCommandWithSlash = `curl --location '${url}' \\\n  --request ${method} \\\n  ${curlHeadersWithSlash} \\\n  --data '${curlDataWithSlash}'`;
 
         // Generate the cURL command without \ but with newlines
         const curlHeadersWithoutSlash = Object.entries(headers)
@@ -136,7 +136,7 @@
           .map((line, index) => (index === 0 ? line : `  ${line}`)) // Indent all lines except the first
           .join("\n  "); // Add line breaks and indentation
 
-        const curlCommandWithoutSlash = `curl --location '${url}'\n  ${curlHeadersWithoutSlash}\n  --data '${curlDataWithoutSlash}'`;
+        const curlCommandWithoutSlash = `curl --location '${url}'\n  --request ${method}\n  ${curlHeadersWithoutSlash}\n  --data '${curlDataWithoutSlash}'`;
 
         // Display the formatted cURL commands
         document.getElementById("curlCommandWithSlash").textContent =
