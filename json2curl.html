@@ -112,31 +112,48 @@
           return;
         }
 
-        const { method, url, headers, data } = jsonData;
+        const { method, url, data = {}, params = {}, headers } = jsonData;
+
+        // Build the URL with query parameters for GET requests
+        let finalUrl = url;
+        if (method.toUpperCase() === "GET" && Object.keys(params).length > 0) {
+          const queryParams = new URLSearchParams(params).toString();
+          finalUrl = `${url}?${queryParams}`;
+        }
 
         // Generate the cURL command with \ and newlines
         const curlHeadersWithSlash = Object.entries(headers)
           .map(([key, value]) => `--header '${key}: ${value}'`)
           .join(" \\\n  "); // Add line breaks and indentation for headers
 
-        const curlDataWithSlash = JSON.stringify(data, null, 2) // Pretty-print the JSON data
-          .split("\n") // Split into lines
-          .map((line, index) => (index === 0 ? line : `  ${line}`)) // Indent all lines except the first
-          .join(" \\\n  "); // Add line breaks and indentation
+        let curlDataWithSlash = "";
+        if (method.toUpperCase() !== "GET" && Object.keys(data).length > 0) {
+          curlDataWithSlash = JSON.stringify(data, null, 2) // Pretty-print the JSON data
+            .split("\n") // Split into lines
+            .map((line, index) => (index === 0 ? line : `  ${line}`)) // Indent all lines except the first
+            .join(" \\\n  "); // Add line breaks and indentation
+        }
 
-        const curlCommandWithSlash = `curl --location '${url}' \\\n  --request ${method} \\\n  ${curlHeadersWithSlash} \\\n  --data '${curlDataWithSlash}'`;
+        const curlCommandWithSlash = `curl --location '${finalUrl}' \\\n  --request ${method} \\\n  ${curlHeadersWithSlash}${
+          curlDataWithSlash ? ` \\\n  --data '${curlDataWithSlash}'` : ""
+        }`;
 
         // Generate the cURL command without \ but with newlines
         const curlHeadersWithoutSlash = Object.entries(headers)
           .map(([key, value]) => `--header '${key}: ${value}'`)
           .join("\n  "); // Add line breaks and indentation for headers
 
-        const curlDataWithoutSlash = JSON.stringify(data, null, 2) // Pretty-print the JSON data
-          .split("\n") // Split into lines
-          .map((line, index) => (index === 0 ? line : `  ${line}`)) // Indent all lines except the first
-          .join("\n  "); // Add line breaks and indentation
+        let curlDataWithoutSlash = "";
+        if (method.toUpperCase() !== "GET" && Object.keys(data).length > 0) {
+          curlDataWithoutSlash = JSON.stringify(data, null, 2) // Pretty-print the JSON data
+            .split("\n") // Split into lines
+            .map((line, index) => (index === 0 ? line : `  ${line}`)) // Indent all lines except the first
+            .join("\n  "); // Add line breaks and indentation
+        }
 
-        const curlCommandWithoutSlash = `curl --location '${url}'\n  --request ${method}\n  ${curlHeadersWithoutSlash}\n  --data '${curlDataWithoutSlash}'`;
+        const curlCommandWithoutSlash = `curl --location '${finalUrl}'\n  --request ${method}\n  ${curlHeadersWithoutSlash}${
+          curlDataWithoutSlash ? `\n  --data '${curlDataWithoutSlash}'` : ""
+        }`;
 
         // Display the formatted cURL commands
         document.getElementById("curlCommandWithSlash").textContent =
@@ -145,10 +162,10 @@
           curlCommandWithoutSlash;
 
         // Send the request using fetch
-        fetch(url, {
+        fetch(finalUrl, {
           method: method,
           headers: headers,
-          body: JSON.stringify(data),
+          body: method.toUpperCase() !== "GET" ? JSON.stringify(data) : null,
         })
           .then((response) => response.json())
           .then((data) => {
