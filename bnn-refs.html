@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BNN Vedic Astrology Reference</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      color: #4a5568;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-container {
+      margin: 20px 0;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .search-input {
+      padding: 12px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 25px;
+      font-size: 16px;
+      width: 300px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border: 2px solid #667eea;
+      background: transparent;
+      color: #667eea;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .section-header {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-content {
+      padding: 20px;
+      display: none;
+    }
+
+    .section.active .section-content {
+      display: block;
+    }
+
+    .toggle-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .section.active .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 20px;
+      border-left: 4px solid #667eea;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #2d3748;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-subtitle {
+      color: #667eea;
+      font-size: 0.9em;
+      margin-bottom: 15px;
+    }
+
+    .attribute-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .attribute {
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+
+    .attribute-label {
+      font-weight: bold;
+      color: #4a5568;
+    }
+
+    .list-container {
+      margin-top: 15px;
+    }
+
+    .list-title {
+      font-weight: bold;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .tag {
+      background: #e2e8f0;
+      color: #4a5568;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+    }
+
+    .planet-card {
+      border-left-color: #f56565;
+    }
+
+    .zodiac-card {
+      border-left-color: #48bb78;
+    }
+
+    .house-card {
+      border-left-color: #ed8936;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .table th,
+    .table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table th {
+      background: #f7fafc;
+      font-weight: bold;
+      color: #2d3748;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .search-input {
+        width: 100%;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .attribute-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🌌 BNN Vedic Astrology Reference</h1>
+      <p>Comprehensive guide to Vedic astrology data including zodiac signs, planets, houses, and astrological
+        principles</p>
+
+      <div class="search-container">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search astrology data...">
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="zodiac">Zodiac Signs</button>
+          <button class="filter-btn" data-filter="planets">Planets</button>
+          <button class="filter-btn" data-filter="houses">Houses</button>
+          <button class="filter-btn" data-filter="principles">Principles</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zodiac Signs Section -->
+    <div class="section active" data-category="zodiac">
+      <div class="section-header">
+        <span>🌟 Vedic Zodiac Signs (Rashis)</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="grid" id="zodiacGrid">
+          <!-- Zodiac cards will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Planets Section -->
+    <div class="section" data-category="planets">
+      <div class="section-header">
+        <span>🪐 Planetary Details (Grahas)</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="grid" id="planetsGrid">
+          <!-- Planet cards will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Houses Section -->
+    <div class="section" data-category="houses">
+      <div class="section-header">
+        <span>🏠 House Directions & Strengths</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>House</th>
+              <th>Direction</th>
+              <th>Strength</th>
+            </tr>
+          </thead>
+          <tbody id="housesTable">
+            <!-- House data will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Planetary Karakatvas Section -->
+    <div class="section" data-category="principles">
+      <div class="section-header">
+        <span>🔮 Planetary Karakatvas</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="grid" id="karakatvasGrid">
+          <!-- Karakatvas will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Horoscope Study Points Section -->
+    <div class="section" data-category="principles">
+      <div class="section-header">
+        <span>📚 Horoscope Study Points</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="grid" id="studyPointsGrid">
+          <!-- Study points will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Transit Results Section -->
+    <div class="section" data-category="principles">
+      <div class="section-header">
+        <span>🌙 Transit Results</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div id="transitResults">
+          <!-- Transit results will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // BNN Data (imported from your bnn.ts file)
+    const bnnData = {
+      "zodiac_signs_vedic": [
+        {
+          "id": 1,
+          "name_hindi": "मेष",
+          "name_english": "Mesha",
+          "attributes": {
+            "guna": "राजसिक",
+            "color": "लाल",
+            "element": "आग",
+            "length": "लघु",
+            "disability": "दिन में अंधे",
+            "mobility": "चर (चल)",
+            "caste": "क्षत्रिय (योद्धा)",
+            "body_part": "सिर",
+            "nature": "हिंसक",
+            "cause_of_death": "तेज बुखार",
+            "character_traits": "जल्दबाजी, आवेगी, बेचैन, चिड़चिड़ा",
+            "professions": [
+              "सरकार", "नौकरी", "पुलिस", "सैन्य सेवा", "अग्निशमन सेवा", "खेल", "इंजीनियरिंग"
+            ],
+            "tense": "अतीत",
+            "speed": "तेज",
+            "category": "धातु (खनिज)",
+            "ailment": "पित्त (गर्मी)",
+            "nakshatras": "अश्विनी-4पद + भरानी-4पद + कृतिका-1पाद",
+            "gender": "पुरुष",
+            "sentiment": "सकारात्मक",
+            "fertility": "बंजर",
+            "humanity_type": "बेस्टियल",
+            "rising_method": "प्रिस्टोदय (हिंद भाग के साथ बढ़ रहा है)",
+            "ruling_luminary_group": "चंद्र सद्गा",
+            "age_duration": "28 साढ़े वर्ष",
+            "places": ["पहाड़", "पहाड़ियाँ", "जंगल", "गर्म देश", "गाँव"]
+          }
+        }
+        // Add more zodiac signs here...
+      ],
+      "planetary_karakatvas": {
+        "character_appearance_male": "Jupiter",
+        "character_appearance_female": "Venus",
+        "education": "Mercury",
+        "profession": "Saturn",
+        "elder_brother": "Saturn",
+        "younger_brother_3rd": "Mars",
+        "wife": "Venus",
+        "husband": "Mars",
+        "father": "Sun",
+        "mother": "Moon",
+        "finance": "Venus",
+        "vehicle": "Venus"
+      },
+      "house_directions_and_strengths": [
+        { "house": 1, "direction": "East", "strength": "100%" },
+        { "house": 2, "direction": "South", "strength": "75%" },
+        { "house": 3, "direction": "West", "strength": "50%" },
+        { "house": 4, "direction": "North", "strength": null },
+        { "house": 5, "direction": "West", "strength": "50%" },
+        { "house": 6, "direction": "South", "strength": null },
+        { "house": 7, "direction": "West", "strength": "70%" },
+        { "house": 8, "direction": "North", "strength": null },
+        { "house": 9, "direction": "East", "strength": "75%" },
+        { "house": 10, "direction": "South", "strength": null },
+        { "house": 11, "direction": "West", "strength": "50%" },
+        { "house": 12, "direction": "North", "strength": "25%" }
+      ],
+      "horoscope_study_points": [
+        {
+          "point_number": 1,
+          "title": "Planet Movement Direction",
+          "description": "All Planets move from one Rasi to the other in clockwise direction and Rahu and Ketu always move in anti-clockwise direction."
+        },
+        {
+          "point_number": 2,
+          "title": "The Order of Strength of the Planets",
+          "strength_order": [
+            "Rahu and Ketu - Strongest",
+            "Surya", "Chandra", "Sukra", "Guru", "Sani", "Kuja", "Budh - Weakest"
+          ]
+        }
+      ],
+      "transit_results": [
+        "Jupiter is dharma karaka, he represents the free will of the person.",
+        "Jupiter will give the personnel result according to the sign he transits and the aspect he receives from natal planet.",
+        "Saturn is karma karaka, he represents the fate of the person.",
+        "Saturn will give the results which are the rewards of the karmas performed in the previous birth."
+      ],
+      "planetary_details": [
+        {
+          "name_english": "Sun",
+          "name_sanskrit": "Surya",
+          "karakatwas_significance": ["Father", "Government", "Authority", "Soul", "Self"],
+          "general_character": ["Royal", "Authoritative", "Proud", "Generous"],
+          "professions": ["Government service", "Politics", "Medicine", "Leadership roles"],
+          "physical_appearance": { "stature": "Medium height", "constitution": "Pitta" },
+          "associated_places": ["Temples", "Government buildings", "Open spaces"],
+          "diseases": ["Heart problems", "Eye diseases", "Fever", "Headache"],
+          "associated_animals": ["Lion", "Tiger", "Bull"],
+          "associated_birds": ["Eagle", "Hawk"],
+          "associated_plants": ["Wheat", "Marigold", "Sunflower"],
+          "spices_and_grains": ["Wheat", "Saffron", "Pepper"],
+          "household_articles": ["Gold items", "Copper vessels"],
+          "body_parts": ["Heart", "Right eye", "Head"]
+        }
+      ]
+    };
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function () {
+      populateZodiacSigns();
+      populatePlanets();
+      populateHouses();
+      populateKarakatvas();
+      populateStudyPoints();
+      populateTransitResults();
+      setupEventListeners();
+    });
+
+    function populateZodiacSigns() {
+      const grid = document.getElementById('zodiacGrid');
+      bnnData.zodiac_signs_vedic.forEach(sign => {
+        const card = createZodiacCard(sign);
+        grid.appendChild(card);
+      });
+    }
+
+    function createZodiacCard(sign) {
+      const card = document.createElement('div');
+      card.className = 'card zodiac-card';
+      card.innerHTML = `
+                <div class="card-title">
+                    ${sign.name_english} (${sign.name_hindi})
+                </div>
+                <div class="attribute-grid">
+                    <div class="attribute">
+                        <span class="attribute-label">Element:</span> ${sign.attributes.element}
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-label">Color:</span> ${sign.attributes.color}
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-label">Gender:</span> ${sign.attributes.gender}
+                    </div>
+                    <div class="attribute">
+                        <span class="attribute-label">Speed:</span> ${sign.attributes.speed}
+                    </div>
+                </div>
+                <div class="list-container">
+                    <div class="list-title">Character Traits:</div>
+                    <p>${sign.attributes.character_traits}</p>
+                </div>
+                <div class="list-container">
+                    <div class="list-title">Professions:</div>
+                    <div class="tag-list">
+                        ${sign.attributes.professions.slice(0, 5).map(prof => `<span class="tag">${prof}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="list-container">
+                    <div class="list-title">Associated Places:</div>
+                    <div class="tag-list">
+                        ${sign.attributes.places.map(place => `<span class="tag">${place}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+      return card;
+    }
+
+    function populatePlanets() {
+      const grid = document.getElementById('planetsGrid');
+      bnnData.planetary_details.forEach(planet => {
+        const card = createPlanetCard(planet);
+        grid.appendChild(card);
+      });
+    }
+
+    function createPlanetCard(planet) {
+      const card = document.createElement('div');
+      card.className = 'card planet-card';
+      card.innerHTML = `
+                <div class="card-title">
+                    ${planet.name_english} (${planet.name_sanskrit})
+                </div>
+                <div class="list-container">
+                    <div class="list-title">Significance:</div>
+                    <div class="tag-list">
+                        ${planet.karakatwas_significance.slice(0, 5).map(sig => `<span class="tag">${sig}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="list-container">
+                    <div class="list-title">Character:</div>
+                    <div class="tag-list">
+                        ${planet.general_character.map(char => `<span class="tag">${char}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="list-container">
+                    <div class="list-title">Professions:</div>
+                    <div class="tag-list">
+                        ${planet.professions.slice(0, 6).map(prof => `<span class="tag">${prof}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="list-container">
+                    <div class="list-title">Associated Places:</div>
+                    <div class="tag-list">
+                        ${planet.associated_places.slice(0, 4).map(place => `<span class="tag">${place}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+      return card;
+    }
+
+    function populateHouses() {
+      const table = document.getElementById('housesTable');
+      bnnData.house_directions_and_strengths.forEach(house => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+                    <td>${house.house}</td>
+                    <td>${house.direction}</td>
+                    <td>${house.strength || 'Variable'}</td>
+                `;
+        table.appendChild(row);
+      });
+    }
+
+    function populateKarakatvas() {
+      const grid = document.getElementById('karakatvasGrid');
+      Object.entries(bnnData.planetary_karakatvas).forEach(([aspect, planet]) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+                    <div class="card-title">${aspect.replace(/_/g, ' ').toUpperCase()}</div>
+                    <div class="card-subtitle">Ruled by: ${planet}</div>
+                `;
+        grid.appendChild(card);
+      });
+    }
+
+    function populateStudyPoints() {
+      const grid = document.getElementById('studyPointsGrid');
+      bnnData.horoscope_study_points.forEach(point => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+                    <div class="card-title">Point ${point.point_number}: ${point.title}</div>
+                    <p>${point.description}</p>
+                    ${point.strength_order ? `
+                        <div class="list-container">
+                            <div class="list-title">Strength Order:</div>
+                            <div class="tag-list">
+                                ${point.strength_order.map(item => `<span class="tag">${item}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                `;
+        grid.appendChild(card);
+      });
+    }
+
+    function populateTransitResults() {
+      const container = document.getElementById('transitResults');
+      bnnData.transit_results.forEach(result => {
+        const item = document.createElement('div');
+        item.className = 'card';
+        item.innerHTML = `<p>${result}</p>`;
+        container.appendChild(item);
+      });
+    }
+
+    function setupEventListeners() {
+      // Section toggle functionality
+      document.querySelectorAll('.section-header').forEach(header => {
+        header.addEventListener('click', function () {
+          const section = this.parentElement;
+          section.classList.toggle('active');
+        });
+      });
+
+      // Search functionality
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        filterContent(searchTerm);
+      });
+
+      // Filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          const filter = this.dataset.filter;
+          filterSections(filter);
+        });
+      });
+    }
+
+    function filterContent(searchTerm) {
+      document.querySelectorAll('.card').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function filterSections(filter) {
+      document.querySelectorAll('.section').forEach(section => {
+        if (filter === 'all') {
+          section.style.display = 'block';
+        } else {
+          const category = section.dataset.category;
+          if (category === filter) {
+            section.style.display = 'block';
+          } else {
+            section.style.display = 'none';
+          }
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
