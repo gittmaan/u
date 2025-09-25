@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BNN Progression Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #4a5568;
+      margin-bottom: 30px;
+      font-size: 2.2em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #4a5568;
+      font-size: 0.95em;
+    }
+
+    input,
+    select {
+      padding: 12px 15px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .calculate-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .calculate-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .results {
+      margin-top: 30px;
+      padding: 25px;
+      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+      border-radius: 15px;
+      border-left: 5px solid #667eea;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 16px;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    .result-value {
+      font-weight: 500;
+      color: #2d3748;
+      background: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .house-wheel {
+      margin-top: 20px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .house-chart-svg {
+      width: 100%;
+      height: auto;
+    }
+
+    .house-polygon {
+      fill: #f7fafc;
+      stroke: #2c3e50;
+      stroke-width: 2;
+      transition: all 0.3s ease;
+    }
+
+    .house-polygon.current {
+      fill: url(#currentGradient);
+      stroke: #4c51bf;
+      stroke-width: 3;
+    }
+
+    .house-text {
+      font-family: Arial, sans-serif;
+      font-size: 24px;
+      font-weight: bold;
+      fill: #2c3e50;
+      text-anchor: middle;
+      dominant-baseline: central;
+      transition: all 0.3s ease;
+    }
+
+    .house-text.current {
+      fill: white;
+      font-size: 28px;
+    }
+
+    .house-outer-border {
+      fill: none;
+      stroke: #2c3e50;
+      stroke-width: 3;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 15px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.5s ease;
+      border-radius: 5px;
+    }
+
+    .planet-presets {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .preset-btn {
+      padding: 8px 12px;
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .preset-btn:hover {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .house-wheel {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🌌 BNN Progression Calculator</h1>
+
+    <div class="planet-presets">
+      <div class="preset-btn" onclick="setPreset('Sun', 1)">☉ Sun (1yr)</div>
+      <div class="preset-btn" onclick="setPreset('Moon', 0.077)">☽ Moon (28d)</div>
+      <div class="preset-btn" onclick="setPreset('Mercury', 0.24)">☿ Mercury (88d)</div>
+      <div class="preset-btn" onclick="setPreset('Venus', 0.62)">♀ Venus (225d)</div>
+      <div class="preset-btn" onclick="setPreset('Mars', 1.88)">♂ Mars (1.9yr)</div>
+      <div class="preset-btn" onclick="setPreset('Jupiter', 11.86)">♃ Jupiter (11.9yr)</div>
+      <div class="preset-btn" onclick="setPreset('Saturn', 29.46)">♄ Saturn (29.5yr)</div>
+      <div class="preset-btn" onclick="setPreset('Uranus', 84.01)">♅ Uranus (84yr)</div>
+      <div class="preset-btn" onclick="setPreset('Neptune', 164.8)">♆ Neptune (165yr)</div>
+      <div class="preset-btn" onclick="setPreset('Pluto', 248.09)">♇ Pluto (248yr)</div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="planetName">Planet Name</label>
+        <input type="text" id="planetName" value="Sun" placeholder="e.g., Sun, Moon, Jupiter">
+      </div>
+
+      <div class="form-group">
+        <label for="cycleTime">Total Cycle Time (years)</label>
+        <input type="number" id="cycleTime" value="1" step="0.01" placeholder="e.g., 1, 11.86, 29.46">
+      </div>
+
+      <div class="form-group">
+        <label for="birthDate">Date of Birth</label>
+        <input type="date" id="birthDate" value="1990-01-01">
+      </div>
+
+      <div class="form-group">
+        <label for="initialHouse">Initial House Position</label>
+        <select id="initialHouse">
+          <option value="1">1st House - Identity & Self</option>
+          <option value="2">2nd House - Values & Resources</option>
+          <option value="3">3rd House - Communication</option>
+          <option value="4">4th House - Home & Family</option>
+          <option value="5">5th House - Creativity & Romance</option>
+          <option value="6">6th House - Health & Service</option>
+          <option value="7">7th House - Partnerships</option>
+          <option value="8">8th House - Transformation</option>
+          <option value="9">9th House - Philosophy & Travel</option>
+          <option value="10">10th House - Career & Reputation</option>
+          <option value="11">11th House - Friends & Goals</option>
+          <option value="12">12th House - Spirituality & Subconscious</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="targetDate">Target Date</label>
+        <input type="date" id="targetDate">
+      </div>
+    </div>
+
+    <button class="calculate-btn" onclick="calculateProgression()">
+      Calculate Planetary Progression
+    </button>
+
+    <div id="results" class="results" style="display: none;">
+      <div class="result-item">
+        <span class="result-label">Time Elapsed:</span>
+        <span class="result-value" id="timeElapsed"></span>
+      </div>
+      <div class="result-item">
+        <span class="result-label">Current House:</span>
+        <span class="result-value" id="currentHouse"></span>
+      </div>
+      <div class="result-item">
+        <span class="result-label">Degrees into House:</span>
+        <span class="result-value" id="degreesIntoHouse"></span>
+      </div>
+      <div class="result-item">
+        <span class="result-label">Progress through House:</span>
+        <span class="result-value" id="progressPercentage"></span>
+      </div>
+      <div class="result-item">
+        <span class="result-label">Complete Cycles:</span>
+        <span class="result-value" id="completeCycles"></span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="house-wheel" id="houseWheel">
+        <!-- Houses will be generated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Set today's date as default
+    document.getElementById('targetDate').value = new Date().toISOString().split('T')[0];
+
+    function setPreset(planetName, cycleTime) {
+      document.getElementById('planetName').value = planetName;
+      document.getElementById('cycleTime').value = cycleTime;
+    }
+
+    function createHouseChart() {
+      const houseWheel = document.getElementById('houseWheel');
+      houseWheel.innerHTML = `
+                <svg class="house-chart-svg" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Gradient definition for current house -->
+                    <defs>
+                        <linearGradient id="currentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- House 1 - Center top diamond -->
+                    <polygon id="house-1" class="house-polygon" points="300,50 200,150 300,250 400,150"/>
+                    <text id="text-1" class="house-text" x="300" y="155">1</text>
+
+                    <!-- House 2 - Top left triangle -->
+                    <polygon id="house-2" class="house-polygon" points="50,50 300,50 200,150"/>
+                    <text id="text-2" class="house-text" x="183" y="95">2</text>
+
+                    <!-- House 3 - Left top triangle -->
+                    <polygon id="house-3" class="house-polygon" points="50,50 200,150 50,250"/>
+                    <text id="text-3" class="house-text" x="133" y="150">3</text>
+
+                    <!-- House 4 - Center left diamond -->
+                    <polygon id="house-4" class="house-polygon" points="200,150 50,250 200,350 300,250"/>
+                    <text id="text-4" class="house-text" x="200" y="250">4</text>
+
+                    <!-- House 5 - Left bottom triangle -->
+                    <polygon id="house-5" class="house-polygon" points="50,250 200,350 50,450"/>
+                    <text id="text-5" class="house-text" x="133" y="350">5</text>
+
+                    <!-- House 6 - Bottom left triangle -->
+                    <polygon id="house-6" class="house-polygon" points="50,450 200,350 300,450"/>
+                    <text id="text-6" class="house-text" x="183" y="417">6</text>
+
+                    <!-- House 7 - Center bottom diamond -->
+                    <polygon id="house-7" class="house-polygon" points="300,250 200,350 300,450 400,350"/>
+                    <text id="text-7" class="house-text" x="300" y="350">7</text>
+
+                    <!-- House 8 - Bottom right triangle -->
+                    <polygon id="house-8" class="house-polygon" points="400,350 550,450 300,450"/>
+                    <text id="text-8" class="house-text" x="417" y="417">8</text>
+
+                    <!-- House 9 - Right bottom triangle -->
+                    <polygon id="house-9" class="house-polygon" points="550,250 400,350 550,450"/>
+                    <text id="text-9" class="house-text" x="467" y="350">9</text>
+
+                    <!-- House 10 - Center right diamond -->
+                    <polygon id="house-10" class="house-polygon" points="400,150 300,250 400,350 550,250"/>
+                    <text id="text-10" class="house-text" x="400" y="250">10</text>
+
+                    <!-- House 11 - Right top triangle -->
+                    <polygon id="house-11" class="house-polygon" points="550,50 400,150 550,250"/>
+                    <text id="text-11" class="house-text" x="467" y="150">11</text>
+
+                    <!-- House 12 - Top right triangle -->
+                    <polygon id="house-12" class="house-polygon" points="300,50 400,150 550,50"/>
+                    <text id="text-12" class="house-text" x="417" y="95">12</text>
+
+                    <!-- Outer boundary -->
+                    <polygon class="house-outer-border" points="300,50 550,50 550,250 550,450 300,450 50,450 50,250 50,50"/>
+                </svg>
+            `;
+    }
+
+    function calculateProgression() {
+      const planetName = document.getElementById('planetName').value;
+      const cycleTime = parseFloat(document.getElementById('cycleTime').value);
+      const birthDate = new Date(document.getElementById('birthDate').value);
+      const initialHouse = parseInt(document.getElementById('initialHouse').value);
+      const targetDate = new Date(document.getElementById('targetDate').value);
+
+      // Calculate time elapsed in years
+      const timeElapsedMs = targetDate.getTime() - birthDate.getTime();
+      const timeElapsedYears = timeElapsedMs / (1000 * 60 * 60 * 24 * 365.25);
+
+      // Calculate how many complete cycles have occurred
+      const completeCycles = Math.floor(timeElapsedYears / cycleTime);
+
+      // Calculate current position in the cycle (0 to 1)
+      const currentCyclePosition = (timeElapsedYears / cycleTime) % 1;
+
+      // Calculate current house position
+      // Each house represents 1/12 of the cycle (30 degrees)
+      const housesProgressed = currentCyclePosition * 12;
+      const currentHouseOffset = Math.floor(housesProgressed);
+      const currentHouse = ((initialHouse - 1 + currentHouseOffset) % 12) + 1;
+
+      // Calculate degrees into current house (0-30 degrees)
+      const degreesIntoHouse = (housesProgressed % 1) * 30;
+
+      // Calculate progress percentage through current house
+      const progressPercentage = (housesProgressed % 1) * 100;
+
+      // Display results
+      document.getElementById('timeElapsed').textContent =
+        `${timeElapsedYears.toFixed(2)} years`;
+
+      document.getElementById('currentHouse').textContent =
+        `${currentHouse}${getOrdinalSuffix(currentHouse)} House`;
+
+      document.getElementById('degreesIntoHouse').textContent =
+        `${degreesIntoHouse.toFixed(1)}°`;
+
+      document.getElementById('progressPercentage').textContent =
+        `${progressPercentage.toFixed(1)}%`;
+
+      document.getElementById('completeCycles').textContent =
+        `${completeCycles} complete cycles`;
+
+      // Update progress bar
+      document.getElementById('progressFill').style.width = `${progressPercentage}%`;
+
+      // Create and highlight house chart
+      createHouseChart();
+
+      // Reset all houses
+      document.querySelectorAll('.house-polygon').forEach(polygon => {
+        polygon.classList.remove('current');
+      });
+      document.querySelectorAll('.house-text').forEach(text => {
+        text.classList.remove('current');
+      });
+
+      // Highlight current house
+      document.getElementById(`house-${currentHouse}`).classList.add('current');
+      document.getElementById(`text-${currentHouse}`).classList.add('current');
+
+      // Show results
+      document.getElementById('results').style.display = 'block';
+    }
+
+    function getOrdinalSuffix(num) {
+      const suffixes = ['th', 'st', 'nd', 'rd'];
+      const mod100 = num % 100;
+      return suffixes[(mod100 - 20) % 10] || suffixes[mod100] || suffixes[0];
+    }
+
+    // Initialize house chart on page load
+    createHouseChart();
+  </script>
+</body>
+
+</html>
