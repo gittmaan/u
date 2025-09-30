@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,16 +11,22 @@
             font-family: 'Inter', sans-serif;
             background-color: #f7f9fc;
         }
+
         .retro-text {
-            color: #ef4444; /* Red for Retrograde */
+            color: #ef4444;
+            /* Red for Retrograde */
         }
+
         .main-card {
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
+
         .result-box {
-            background-color: #e0f2fe; /* Light blue */
+            background-color: #e0f2fe;
+            /* Light blue */
             border: 1px solid #bae6fd;
         }
+
         .active-age {
             background-color: #3b82f6;
             color: white;
@@ -31,25 +38,42 @@
         }
     </style>
 </head>
+
 <body class="p-4 sm:p-8 min-h-screen">
+    <div class="max-w-4xl mx-auto">
+        <!-- Back Navigation -->
+        <div class="mb-6">
+            <a href="bnn.html" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                ← Back to BNN Tools
+            </a>
+        </div>
+    </div>
 
     <!-- Simple Message Box for Validation -->
-    <div id="messageBox" class="fixed top-4 right-4 bg-red-600 text-white p-4 rounded-lg shadow-2xl z-50 transition-opacity duration-300 hidden"></div>
+    <div id="messageBox"
+        class="fixed top-4 right-4 bg-red-600 text-white p-4 rounded-lg shadow-2xl z-50 transition-opacity duration-300 hidden">
+    </div>
 
     <div class="max-w-4xl mx-auto main-card bg-white p-6 sm:p-10 rounded-xl">
         <h1 class="text-3xl font-extrabold text-gray-800 mb-2">Bhrigu Nandi Nadi (BNN) Marriage Age Calculator</h1>
-        <p class="text-gray-600 mb-8">Determine probable marriage ages based on BNN house progression cycles (12-year cycle from Lagna).</p>
+        <p class="text-gray-600 mb-8">Determine probable marriage ages based on BNN house progression cycles (12-year
+            cycle from Lagna).</p>
 
         <!-- INPUTS SECTION -->
         <div class="space-y-6">
             <h2 class="text-xl font-semibold text-indigo-700 border-b pb-2">Chart Essentials</h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
+
                 <!-- 7th Lord Input -->
                 <div>
-                    <label for="house7Lord" class="block text-sm font-medium text-gray-700">7th Lord (Karak for Spouse/Marriage)</label>
-                    <select id="house7Lord" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
+                    <label for="house7Lord" class="block text-sm font-medium text-gray-700">7th Lord (Karak for
+                        Spouse/Marriage)</label>
+                    <select id="house7Lord"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
                         <option value="Venus">Venus (Ve)</option>
                         <option value="Mars">Mars (Ma)</option>
                         <option value="Jupiter">Jupiter (Ju)</option>
@@ -59,11 +83,14 @@
                         <option value="Sun">Sun (Su)</option>
                     </select>
                 </div>
-                
+
                 <!-- 7th Lord House Position -->
                 <div>
-                    <label for="hl7House" class="block text-sm font-medium text-gray-700">7th Lord House Position (1-12)</label>
-                    <input type="number" id="hl7House" min="1" max="12" value="2" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm" required>
+                    <label for="hl7House" class="block text-sm font-medium text-gray-700">7th Lord House Position
+                        (1-12)</label>
+                    <input type="number" id="hl7House" min="1" max="12" value="2"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"
+                        required>
                     <p class="text-xs text-gray-500 mt-1">Based on the image, this is set to House 2.</p>
                 </div>
             </div>
@@ -73,20 +100,30 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
-                    <label for="juHouse" class="block text-sm font-medium text-gray-700">Jupiter (Jeeva Karaka) House</label>
-                    <input type="number" id="juHouse" min="1" max="12" value="5" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm" required>
+                    <label for="juHouse" class="block text-sm font-medium text-gray-700">Jupiter (Jeeva Karaka)
+                        House</label>
+                    <input type="number" id="juHouse" min="1" max="12" value="5"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"
+                        required>
                 </div>
                 <div>
-                    <label for="saHouse" class="block text-sm font-medium text-gray-700">Saturn (Karma Karaka) House</label>
-                    <input type="number" id="saHouse" min="1" max="12" value="5" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm" required>
+                    <label for="saHouse" class="block text-sm font-medium text-gray-700">Saturn (Karma Karaka)
+                        House</label>
+                    <input type="number" id="saHouse" min="1" max="12" value="5"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"
+                        required>
                 </div>
                 <div>
-                    <label for="rahuHouse" class="block text-sm font-medium text-gray-700">Rahu (Unconventional) House</label>
-                    <input type="number" id="rahuHouse" min="1" max="12" value="4" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm" required>
+                    <label for="rahuHouse" class="block text-sm font-medium text-gray-700">Rahu (Unconventional)
+                        House</label>
+                    <input type="number" id="rahuHouse" min="1" max="12" value="4"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"
+                        required>
                 </div>
             </div>
-            
-            <button onclick="calculateMarriageAges()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-150 ease-in-out">
+
+            <button onclick="calculateMarriageAges()"
+                class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-150 ease-in-out">
                 Calculate Probable Marriage Ages
             </button>
         </div>
@@ -104,7 +141,7 @@
     <script>
         // --- CORE BNN LOGIC ---
 
-        // Planetary house positions used for calculation. 
+        // Planetary house positions used for calculation.
         const PLANET_KEY = {
             HL7: '7th Lord',
             JU: 'Jupiter (Jeeva Karaka)',
@@ -145,7 +182,7 @@
             if (positions.JU === houseNum) return PLANET_KEY.JU + " (Direct)";
             if (positions.SA === houseNum) return PLANET_KEY.SA + " (Direct)";
             if (positions.RAHU === houseNum) return PLANET_KEY.RAHU + " (Direct)";
-            
+
             // --- 2. BNN Aspects (5th, 7th, 9th) ---
 
             // The 'aspecting houses' are the houses that, if they contain a key planet,
@@ -192,7 +229,7 @@
             resultsContainer.style.display = 'block';
 
             let allAges = [];
-            
+
             // 2. Process Cycles
             BNN_CYCLES.forEach(cycle => {
                 let activeAges = [];
@@ -204,15 +241,15 @@
                 // For the Normal Marriage Cycle (3rd House), often active if 7HL or Karakas are involved closely.
                 // Re-enforcing the direct placement check here as it is the strongest indicator.
                 if (housePositions.HL7 === cycle.mainHouse) {
-                     cycleActivationSource = PLANET_KEY.HL7 + " (Directly in Main House)";
+                    cycleActivationSource = PLANET_KEY.HL7 + " (Directly in Main House)";
                 }
-                
+
                 // If the Main Cycle House is ON, check the Secondary Houses (Ages)
                 if (cycleActivationSource) {
                     for (let age = cycle.startAge; age <= cycle.endAge; age++) {
                         // Secondary House (S) is the House number corresponding to the age from Lagna
                         const secondaryHouse = ((age - 1) % 12) + 1; // 1-based house number for the age
-                        
+
                         // BNN Rule 2: Check if Secondary House (S) is strongly activated
                         const secondaryActivation = checkActivation(secondaryHouse, housePositions);
 
@@ -250,15 +287,15 @@
             // 4. Overall Summary
             const lateMarriageTrigger = allAges.find(a => a.age > 36);
             let summaryText = '';
-            
+
             if (lateMarriageTrigger) {
                 summaryText += `<p class="mt-2 font-semibold text-gray-800">Conclusion:</p>`;
                 summaryText += `<p>This chart shows strong triggers for a **Late Marriage** (past age 36), confirmed by the activation of the 4th BNN Cycle (House ${BNN_CYCLES[2].mainHouse}). Planets like Rahu and Saturn are often responsible for such delays.</p>`;
             } else if (allAges.find(a => a.age >= 25 && a.age <= 36)) {
-                 summaryText += `<p class="mt-2 font-semibold text-gray-800">Conclusion:</p>`;
+                summaryText += `<p class="mt-2 font-semibold text-gray-800">Conclusion:</p>`;
                 summaryText += `<p>The highest probability is for a **Normal Marriage** (ages 25-36). The 3rd House Cycle is strongly activated.</p>`;
             } else {
-                 summaryText += `<p class="mt-2 font-semibold text-gray-800">Conclusion:</p>`;
+                summaryText += `<p class="mt-2 font-semibold text-gray-800">Conclusion:</p>`;
                 summaryText += `<p>The BNN system does not show strong direct hits for marriage in these three primary cycles. A deeper analysis using full planetary aspects would be required.</p>`;
             }
 
@@ -268,19 +305,20 @@
 
         // Initialize with the example chart data from the uploaded image
         document.addEventListener('DOMContentLoaded', () => {
-             // Values from the uploaded chart image:
-             // 7th Lord: Ve
-             // Ve (7HL): House 2
-             // Ju: House 5
-             // Sa: House 5
-             // Ra: House 4
-             document.getElementById('house7Lord').value = 'Venus';
-             document.getElementById('hl7House').value = '2';
-             document.getElementById('juHouse').value = '5';
-             document.getElementById('saHouse').value = '5';
-             document.getElementById('rahuHouse').value = '4';
+            // Values from the uploaded chart image:
+            // 7th Lord: Ve
+            // Ve (7HL): House 2
+            // Ju: House 5
+            // Sa: House 5
+            // Ra: House 4
+            document.getElementById('house7Lord').value = 'Venus';
+            document.getElementById('hl7House').value = '2';
+            document.getElementById('juHouse').value = '5';
+            document.getElementById('saHouse').value = '5';
+            document.getElementById('rahuHouse').value = '4';
         });
 
     </script>
 </body>
+
 </html>

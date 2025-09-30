@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BNN Astrology Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            color: #4a5568;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #718096;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .tool-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .tool-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .tool-description {
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tool-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .tool-features li {
+            color: #667eea;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .tool-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .tool-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .tool-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            color: #4a5568;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .tool-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌌 BNN Astrology Tools</h1>
+            <p>Comprehensive suite of Bhrigu Nandi Nadi (BNN) astrology calculators and reference materials for precise astrological analysis</p>
+        </div>
+
+        <div class="tools-grid">
+            <!-- Marriage Age Predictor -->
+            <a href="bnn-marriage-age-predictor.html" class="tool-card">
+                <span class="tool-icon">💍</span>
+                <h2 class="tool-title">Marriage Age Predictor</h2>
+                <p class="tool-description">
+                    Calculate probable marriage ages using BNN house progression cycles and planetary activations.
+                </p>
+                <ul class="tool-features">
+                    <li>12-year BNN cycle analysis</li>
+                    <li>7th Lord and Karaka positions</li>
+                    <li>Early, Normal & Late marriage predictions</li>
+                    <li>Detailed activation explanations</li>
+                </ul>
+                <span class="tool-button">Calculate Marriage Ages →</span>
+            </a>
+
+            <!-- Progression Calculator -->
+            <a href="bnn-progression.html" class="tool-card">
+                <span class="tool-icon">🪐</span>
+                <h2 class="tool-title">Planetary Progression</h2>
+                <p class="tool-description">
+                    Track planetary movements through houses over time with visual house wheel representation.
+                </p>
+                <ul class="tool-features">
+                    <li>All planetary cycle presets</li>
+                    <li>Visual house wheel display</li>
+                    <li>Degree-precise calculations</li>
+                    <li>Progress tracking over time</li>
+                </ul>
+                <span class="tool-button">Calculate Progressions →</span>
+            </a>
+
+            <!-- Vedic Reference -->
+            <a href="bnn-refs.html" class="tool-card">
+                <span class="tool-icon">📚</span>
+                <h2 class="tool-title">Vedic Astrology Reference</h2>
+                <p class="tool-description">
+                    Comprehensive database of Vedic astrology data including zodiac signs, planets, and principles.
+                </p>
+                <ul class="tool-features">
+                    <li>Complete zodiac sign attributes</li>
+                    <li>Planetary karakatvas & details</li>
+                    <li>House directions & strengths</li>
+                    <li>Searchable reference database</li>
+                </ul>
+                <span class="tool-button">Browse Reference →</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            <h3>About BNN Astrology</h3>
+            <p>
+                Bhrigu Nandi Nadi (BNN) is an advanced system of Vedic astrology that provides precise timing predictions 
+                through house progression cycles and planetary activations. These tools implement authentic BNN methodologies 
+                for accurate astrological analysis and life event timing.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
