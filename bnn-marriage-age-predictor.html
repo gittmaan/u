@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BNN Marriage Age Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc;
+        }
+        .retro-text {
+            color: #ef4444; /* Red for Retrograde */
+        }
+        .main-card {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        .result-box {
+            background-color: #e0f2fe; /* Light blue */
+            border: 1px solid #bae6fd;
+        }
+        .active-age {
+            background-color: #3b82f6;
+            color: white;
+            padding: 4px 8px;
+            margin: 4px;
+            border-radius: 9999px;
+            font-weight: 600;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 min-h-screen">
+
+    <!-- Simple Message Box for Validation -->
+    <div id="messageBox" class="fixed top-4 right-4 bg-red-600 text-white p-4 rounded-lg shadow-2xl z-50 transition-opacity duration-300 hidden"></div>
+
+    <div class="max-w-4xl mx-auto main-card bg-white p-6 sm:p-10 rounded-xl">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-2">Bhrigu Nandi Nadi (BNN) Marriage Age Calculator</h1>
+        <p class="text-gray-600 mb-8">Determine probable marriage ages based on BNN house progression cycles (12-year cycle from Lagna).</p>
+
+        <!-- INPUTS SECTION -->
+        <div class="space-y-6">
+            <h2 class="text-xl font-semibold text-indigo-700 border-b pb-2">Chart Essentials</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- 7th Lord Input -->
+                <div>
+                    <label for="house7Lord" class="block text-sm font-medium text-gray-700">7th Lord (Karak for Spouse/Marriage)</label>
+                    <select id="house7Lord" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
+                        <option value="Venus">Venus (Ve)</option>
+                        <option value="Mars">Mars (Ma)</option>
+                        <option value="Jupiter">Jupiter (Ju)</option>
+                        <option value="Saturn">Saturn (Sa)</option>
+                        <option value="Mercury">Mercury (Me)</option>
+                        <option value="Moon">Moon (Mo)</option>
+                        <option value="Sun">Sun (Su)</option>
+                    </select>
+                </div>
+                
+                <!-- 7th Lord House Position -->
+                <div>
+                    <label for="hl7House" class="block text-sm font-medium text-gray-700">7th Lord House Position (1-12)</label>
+                    <input type="number" id="hl7House" min="1" max="12" value="2" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm" required>
+                    <p class="text-xs text-gray-500 mt-1">Based on the image, this is set to House 2.</p>
+                </div>
+            </div>
+
+            <!-- Karaka Positions -->
+            <h2 class="text-xl font-semibold text-indigo-700 border-b pb-2 pt-4">Karaka Planetary Positions</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div>
+                    <label for="juHouse" class="block text-sm font-medium text-gray-700">Jupiter (Jeeva Karaka) House</label>
+                    <input type="number" id="juHouse" min="1" max="12" value="5" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm" required>
+                </div>
+                <div>
+                    <label for="saHouse" class="block text-sm font-medium text-gray-700">Saturn (Karma Karaka) House</label>
+                    <input type="number" id="saHouse" min="1" max="12" value="5" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm" required>
+                </div>
+                <div>
+                    <label for="rahuHouse" class="block text-sm font-medium text-gray-700">Rahu (Unconventional) House</label>
+                    <input type="number" id="rahuHouse" min="1" max="12" value="4" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm" required>
+                </div>
+            </div>
+            
+            <button onclick="calculateMarriageAges()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-150 ease-in-out">
+                Calculate Probable Marriage Ages
+            </button>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div id="results" class="mt-10 space-y-8">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-2">Prediction Results</h2>
+            <div id="result-early" class="result-box p-4 rounded-lg"></div>
+            <div id="result-normal" class="result-box p-4 rounded-lg"></div>
+            <div id="result-late" class="result-box p-4 rounded-lg"></div>
+            <div id="explanation" class="text-sm text-gray-600 border-t pt-4"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- CORE BNN LOGIC ---
+
+        // Planetary house positions used for calculation. 
+        const PLANET_KEY = {
+            HL7: '7th Lord',
+            JU: 'Jupiter (Jeeva Karaka)',
+            SA: 'Saturn (Karma Karaka)',
+            RAHU: 'Rahu (Delay/Unconventional)',
+        };
+
+        const BNN_CYCLES = [
+            { name: "Early Marriage (1st Cycle)", startAge: 13, endAge: 24, mainHouse: 2, title: "Marriage potential through the 2nd House (Family/Wealth)." },
+            { name: "Normal Marriage (2nd Cycle)", startAge: 25, endAge: 36, mainHouse: 3, title: "Marriage potential through the 3rd House (Effort/Relationships)." },
+            { name: "Late Marriage (3rd Cycle)", startAge: 37, endAge: 48, mainHouse: 4, title: "Marriage potential through the 4th House (Home/Settlement)." }
+        ];
+
+        /**
+         * Utility function to show non-blocking messages (replacing alert()).
+         * @param {string} msg The message to display.
+         */
+        function showMessage(msg) {
+            const box = document.getElementById('messageBox');
+            box.textContent = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 4000);
+        }
+
+        /**
+         * Checks if a given house number is strongly activated for marriage, based on BNN principles.
+         * Includes 5th, 7th, and 9th BNN aspects.
+         * @param {number} houseNum The house number (1-12) to check.
+         * @param {Object} positions The map of key planet houses {HL7: 2, JU: 5, SA: 5, RAHU: 4}.
+         * @returns {string | null} The planet causing the activation, or null.
+         */
+        function checkActivation(houseNum, positions) {
+            // --- 1. Direct Hits (Strongest) ---
+            if (houseNum === 7) return "7th House (Direct Hit)"; // The 7th house is always a trigger
+            if (positions.HL7 === houseNum) return PLANET_KEY.HL7 + " (Direct)";
+            if (positions.JU === houseNum) return PLANET_KEY.JU + " (Direct)";
+            if (positions.SA === houseNum) return PLANET_KEY.SA + " (Direct)";
+            if (positions.RAHU === houseNum) return PLANET_KEY.RAHU + " (Direct)";
+            
+            // --- 2. BNN Aspects (5th, 7th, 9th) ---
+
+            // The 'aspecting houses' are the houses that, if they contain a key planet,
+            // would aspect the current 'houseNum'.
+            const aspectingHouses = [
+                ((houseNum + 5) % 12) + 1, // 7th house from houseNum (Opposition)
+                ((houseNum + 7) % 12) + 1, // 9th house from houseNum (Trine)
+                ((houseNum + 3) % 12) + 1  // 5th house from houseNum (Trine)
+            ];
+
+            // Check if any key planet (excluding Rahu/Ketu for 5/9 aspects) is in an aspecting house
+            for (const aspectHouse of aspectingHouses) {
+                if (positions.HL7 === aspectHouse) return PLANET_KEY.HL7 + " (Aspect)";
+                if (positions.JU === aspectHouse) return PLANET_KEY.JU + " (Aspect)";
+                if (positions.SA === aspectHouse) return PLANET_KEY.SA + " (Aspect)";
+            }
+
+            return null;
+        }
+
+        /**
+         * Calculates probable marriage ages based on BNN methodology.
+         */
+        function calculateMarriageAges() {
+            // 1. Get Inputs and Validate
+            const hl7House = parseInt(document.getElementById('hl7House').value);
+            const juHouse = parseInt(document.getElementById('juHouse').value);
+            const saHouse = parseInt(document.getElementById('saHouse').value);
+            const rahuHouse = parseInt(document.getElementById('rahuHouse').value);
+
+            if (!hl7House || !juHouse || !saHouse || !rahuHouse || hl7House < 1 || hl7House > 12) {
+                showMessage('Please ensure all planetary house positions are entered correctly (1-12).');
+                return;
+            }
+
+            const housePositions = {
+                HL7: hl7House,
+                JU: juHouse,
+                SA: saHouse,
+                RAHU: rahuHouse,
+            };
+
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.style.display = 'block';
+
+            let allAges = [];
+            
+            // 2. Process Cycles
+            BNN_CYCLES.forEach(cycle => {
+                let activeAges = [];
+                let cycleActivationSource = null;
+
+                // BNN Rule 1: Check if Main Cycle House is activated
+                cycleActivationSource = checkActivation(cycle.mainHouse, housePositions);
+
+                // For the Normal Marriage Cycle (3rd House), often active if 7HL or Karakas are involved closely.
+                // Re-enforcing the direct placement check here as it is the strongest indicator.
+                if (housePositions.HL7 === cycle.mainHouse) {
+                     cycleActivationSource = PLANET_KEY.HL7 + " (Directly in Main House)";
+                }
+                
+                // If the Main Cycle House is ON, check the Secondary Houses (Ages)
+                if (cycleActivationSource) {
+                    for (let age = cycle.startAge; age <= cycle.endAge; age++) {
+                        // Secondary House (S) is the House number corresponding to the age from Lagna
+                        const secondaryHouse = ((age - 1) % 12) + 1; // 1-based house number for the age
+                        
+                        // BNN Rule 2: Check if Secondary House (S) is strongly activated
+                        const secondaryActivation = checkActivation(secondaryHouse, housePositions);
+
+                        if (secondaryActivation) {
+                            activeAges.push({ age: age, source: secondaryActivation });
+                        }
+                    }
+                }
+
+                // 3. Format Output
+                const resultId = `result-${cycle.name.split(' ')[0].toLowerCase()}`;
+                const resultElement = document.getElementById(resultId);
+
+                if (activeAges.length > 0) {
+                    const ageList = activeAges.map(a => `<span class="active-age" title="Activated by ${a.source}">Age ${a.age}</span>`).join('');
+                    resultElement.innerHTML = `
+                        <p class="text-lg font-semibold text-blue-800">${cycle.name} (${cycle.startAge}-${cycle.endAge}): <span class="text-green-600">Active</span></p>
+                        <p class="text-sm text-blue-700 mt-1">${cycle.title}</p>
+                        <div class="mt-3">
+                            <p class="text-sm font-medium text-gray-700">Probable Ages (Strong Hit):</p>
+                            <div class="flex flex-wrap mt-2">${ageList}</div>
+                        </div>
+                    `;
+                } else {
+                    resultElement.innerHTML = `
+                        <p class="text-lg font-semibold text-blue-800">${cycle.name} (${cycle.startAge}-${cycle.endAge}): <span class="text-red-600">Less Probable</span></p>
+                        <p class="text-sm text-blue-700 mt-1">${cycle.title}</p>
+                        <p class="text-sm text-gray-700 mt-3">The Main Cycle House (${cycle.mainHouse}) or Age Houses were not strongly connected to the marriage axis (7th House/Lord/Karaka).</p>
+                    `;
+                }
+
+                allAges.push(...activeAges);
+            });
+
+            // 4. Overall Summary
+            const lateMarriageTrigger = allAges.find(a => a.age > 36);
+            let summaryText = '';
+            
+            if (lateMarriageTrigger) {
+                summaryText += `<p class="mt-2 font-semibold text-gray-800">Conclusion:</p>`;
+                summaryText += `<p>This chart shows strong triggers for a **Late Marriage** (past age 36), confirmed by the activation of the 4th BNN Cycle (House ${BNN_CYCLES[2].mainHouse}). Planets like Rahu and Saturn are often responsible for such delays.</p>`;
+            } else if (allAges.find(a => a.age >= 25 && a.age <= 36)) {
+                 summaryText += `<p class="mt-2 font-semibold text-gray-800">Conclusion:</p>`;
+                summaryText += `<p>The highest probability is for a **Normal Marriage** (ages 25-36). The 3rd House Cycle is strongly activated.</p>`;
+            } else {
+                 summaryText += `<p class="mt-2 font-semibold text-gray-800">Conclusion:</p>`;
+                summaryText += `<p>The BNN system does not show strong direct hits for marriage in these three primary cycles. A deeper analysis using full planetary aspects would be required.</p>`;
+            }
+
+            document.getElementById('explanation').innerHTML = summaryText;
+
+        }
+
+        // Initialize with the example chart data from the uploaded image
+        document.addEventListener('DOMContentLoaded', () => {
+             // Values from the uploaded chart image:
+             // 7th Lord: Ve
+             // Ve (7HL): House 2
+             // Ju: House 5
+             // Sa: House 5
+             // Ra: House 4
+             document.getElementById('house7Lord').value = 'Venus';
+             document.getElementById('hl7House').value = '2';
+             document.getElementById('juHouse').value = '5';
+             document.getElementById('saHouse').value = '5';
+             document.getElementById('rahuHouse').value = '4';
+        });
+
+    </script>
+</body>
+</html>
