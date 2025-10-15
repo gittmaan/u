@@ -4,7 +4,6 @@ Public Utility Project
 
 ## Pages
 
-- [Home](index.html)
 - [BNN (Bayesian Neural Network)](bnn.html)
 - [BNN Activation Ages](bnn-activation-ages.html)
 - [BNN Marriage Age Predictor](bnn-marriage-age-predictor.html)
