@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bhrigu Activation Age Calculator</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f0f2f5;
+      color: #1c1e21;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1,
+    h2 {
+      color: #0056b3;
+      border-bottom: 2px solid #0056b3;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+
+    .calculator-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    label {
+      font-weight: bold;
+      margin-right: 10px;
+      flex-basis: 150px;
+    }
+
+    select,
+    input[type="number"] {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      flex-grow: 1;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .results {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e9f5ff;
+      border: 1px solid #b3d7ff;
+      border-radius: 4px;
+    }
+
+    .results h3 {
+      margin-top: 0;
+      color: #0056b3;
+    }
+
+    .results p {
+      margin: 5px 0;
+    }
+
+    .results strong {
+      color: #d9534f;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.9em;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <!-- Back Navigation -->
+    <div style="margin-bottom: 20px;">
+      <a href="bnn.html"
+        style="display: inline-flex; align-items: center; color: #667eea; text-decoration: none; font-weight: 500; transition: all 0.3s ease;">
+        <span style="margin-right: 8px;">←</span>
+        Back to BNN Tools
+      </a>
+    </div>
+    <h1>Bhrigu Activation Age Calculator Astrology App 🪐</h1>
+
+    <div class="calculator-section">
+      <h2>Method 1: Lagna-Based Activation</h2>
+      <div class="input-group">
+        <label for="lagna">Lagna (Ascendant):</label>
+        <select id="lagna"></select>
+      </div>
+      <div class="input-group">
+        <label for="planet1">Select Planet:</label>
+        <select id="planet1"></select>
+      </div>
+      <button onclick="calculateMethod1()">Calculate Activation Ages</button>
+      <div id="results1" class="results" style="display:none;"></div>
+    </div>
+
+    <div class="calculator-section">
+      <h2>Method 2: Planet Position-Based Activation</h2>
+      <div class="input-group">
+        <label for="planet2">Select Planet:</label>
+        <select id="planet2"></select>
+      </div>
+      <div class="input-group">
+        <label for="planet-house">Planet's House Position:</label>
+        <input type="number" id="planet-house" min="1" max="12" value="1">
+      </div>
+      <button onclick="calculateMethod2()">Calculate Activation Ages</button>
+      <div id="results2" class="results" style="display:none;"></div>
+    </div>
+
+    <footer>
+      <p>This calculator is based on the Bhrigu Chakra Paddhati principles as explained in the provided transcript.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    const signs = [
+      "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+      "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+    ];
+
+    const planets = {
+      Sun: { exaltation: 1, debilitation: 7, own: [5] },
+      Moon: { exaltation: 2, debilitation: 8, own: [4] },
+      Mars: { exaltation: 10, debilitation: 4, own: [1, 8] },
+      Mercury: { exaltation: 6, debilitation: 12, own: [3, 6] },
+      Jupiter: { exaltation: 4, debilitation: 10, own: [9, 12] },
+      Venus: { exaltation: 12, debilitation: 6, own: [2, 7] },
+      Saturn: { exaltation: 7, debilitation: 1, own: [10, 11] }
+    };
+
+    // --- Populate Dropdowns on Load ---
+    window.onload = function () {
+      const lagnaSelect = document.getElementById('lagna');
+      const planet1Select = document.getElementById('planet1');
+      const planet2Select = document.getElementById('planet2');
+
+      signs.forEach((sign, index) => {
+        lagnaSelect.innerHTML += `<option value="${index + 1}">${sign}</option>`;
+      });
+
+      Object.keys(planets).forEach(planet => {
+        planet1Select.innerHTML += `<option value="${planet}">${planet}</option>`;
+        planet2Select.innerHTML += `<option value="${planet}">${planet}</option>`;
+      });
+    };
+
+    // --- Helper Function ---
+    function generateAges(baseYear, maxAge = 100) {
+      let ages = [];
+      for (let year = baseYear; year <= maxAge; year += 12) {
+        ages.push(year);
+      }
+      return ages.join(', ');
+    }
+
+    // --- Calculation Functions ---
+    function calculateMethod1() {
+      const lagnaSignNum = parseInt(document.getElementById('lagna').value);
+      const selectedPlanet = document.getElementById('planet1').value;
+      const planetData = planets[selectedPlanet];
+
+      let dignitySigns = [planetData.exaltation, planetData.debilitation, ...planetData.own];
+      let uniqueDignitySigns = [...new Set(dignitySigns)]; // Remove duplicates (e.g., Mercury in Virgo)
+
+      let activationHouses = new Set();
+      uniqueDignitySigns.forEach(signNum => {
+        let house = (signNum - lagnaSignNum + 1);
+        if (house <= 0) {
+          house += 12;
+        }
+        activationHouses.add(house);
+      });
+
+      let sortedHouses = Array.from(activationHouses).sort((a, b) => a - b);
+
+      let output = `<h3>Results for ${selectedPlanet} with ${signs[lagnaSignNum - 1]} Lagna:</h3>`;
+      if (sortedHouses.length > 0) {
+        sortedHouses.forEach(house => {
+          output += `<p>Activates from <strong>House ${house}</strong> in years: ${generateAges(house)}</p>`;
+        });
+      } else {
+        output += `<p>No specific activation houses found.</p>`;
+      }
+
+      const resultsDiv = document.getElementById('results1');
+      resultsDiv.innerHTML = output;
+      resultsDiv.style.display = 'block';
+    }
+
+    function calculateMethod2() {
+      const selectedPlanet = document.getElementById('planet2').value;
+      const planetHouse = parseInt(document.getElementById('planet-house').value);
+      const planetData = planets[selectedPlanet];
+
+      if (isNaN(planetHouse) || planetHouse < 1 || planetHouse > 12) {
+        alert("Please enter a valid house number between 1 and 12.");
+        return;
+      }
+
+      let dignitySigns = [
+        { type: 'Exaltation', relativeHouse: planetData.exaltation },
+        { type: 'Debilitation', relativeHouse: planetData.debilitation }
+      ];
+      planetData.own.forEach(ownSign => {
+        // Avoid duplicating Virgo for Mercury
+        if (!dignitySigns.some(d => d.relativeHouse === ownSign)) {
+          dignitySigns.push({ type: 'Own Sign', relativeHouse: ownSign });
+        }
+      });
+
+      let output = `<h3>Results for ${selectedPlanet} in House ${planetHouse}:</h3>`;
+      output += `<p>${selectedPlanet} will activate the following houses (relative to the chart) at these ages:</p>`;
+
+      dignitySigns.sort((a, b) => a.relativeHouse - b.relativeHouse).forEach(item => {
+        let relativeHouse = item.relativeHouse;
+        let result = (planetHouse + relativeHouse - 1) % 12;
+        let actualHouse = result === 0 ? 12 : result;
+
+        output += `<p>Activates <strong>House ${actualHouse}</strong> (the ${relativeHouse}th house from itself) in years: ${generateAges(relativeHouse)}</p>`;
+      });
+
+      const resultsDiv = document.getElementById('results2');
+      resultsDiv.innerHTML = output;
+      resultsDiv.style.display = 'block';
+    }
+  </script>
+
+</body>
+
+</html>
