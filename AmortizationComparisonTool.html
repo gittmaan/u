@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mortgage Comparison Tool</title>
+  <title>Mortgage Optimizer | Spreadsheet Aligned</title>
   <style>
     :root {
       --bg-color: #f8fafc;
@@ -28,12 +28,12 @@
     }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       margin: 0;
       padding: 20px;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s;
     }
 
     .container {
@@ -45,7 +45,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
     .controls {
@@ -61,19 +61,27 @@
       background: var(--card-bg);
       color: var(--text-main);
       font-weight: 600;
-      transition: all 0.2s;
     }
 
-    button:hover {
-      border-color: var(--primary);
-      background: rgba(37, 99, 235, 0.05);
-    }
-
+    /* Layout Structure */
     .input-section {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+    }
+
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
     }
 
     .card {
@@ -86,9 +94,9 @@
 
     h2 {
       margin-top: 0;
-      font-size: 1rem;
+      font-size: 0.9rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.1em;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -125,19 +133,12 @@
       font-weight: 600;
     }
 
-    .summary-bar {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
     .stat-card {
       background: var(--card-bg);
       padding: 20px;
       border-radius: 16px;
       text-align: center;
-      border: 1px solid var(--border-color);
+      border: 2px solid var(--border-color);
     }
 
     .stat-card span {
@@ -149,18 +150,8 @@
     }
 
     .stat-card strong {
-      font-size: 1.5rem;
-      color: var(--primary);
-    }
-
-    .savings-val {
-      color: var(--new-accent) !important;
-    }
-
-    .comparison-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      font-size: 1.6rem;
+      color: var(--new-accent);
     }
 
     .table-container {
@@ -182,7 +173,6 @@
       text-align: right;
       border-bottom: 2px solid var(--border-color);
       color: var(--text-muted);
-      white-space: nowrap;
     }
 
     td {
@@ -197,15 +187,6 @@
       font-weight: 700;
       background: var(--bg-color);
     }
-
-    @media (max-width: 1000px) {
-
-      .input-section,
-      .comparison-grid,
-      .summary-bar {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
 
@@ -213,7 +194,7 @@
 
   <div class="container">
     <header>
-      <h1>Mortgage Comparison Tool</h1>
+      <h1>Mortgage Optimizer</h1>
       <div class="controls">
         <button onclick="copyLink()">🔗 Copy Link</button>
         <button onclick="toggleTheme()">🌓 Theme</button>
@@ -223,61 +204,41 @@
     <div class="input-section">
       <div class="card">
         <h2 class="current-h2">● Current Program</h2>
-        <div class="input-group">
-          <label>Principal ($)</label>
-          <input type="number" id="curAmt" value="623678">
+        <div class="input-group"><label>Principal Balance ($)</label><input type="number" id="curAmt" value="623678">
         </div>
-        <div class="input-group">
-          <label>Interest Rate (%)</label>
-          <input type="number" id="curRate" value="6.125" step="0.125">
-        </div>
-        <div class="input-group">
-          <label>Remaining Months</label>
-          <input type="number" id="curMos" value="312">
+        <div class="input-group"><label>Interest Rate (%)</label><input type="number" id="curRate" value="6.125"
+            step="0.001"></div>
+        <div class="input-group"><label>Remaining Months</label><input type="number" id="curMos" value="312"></div>
+        <div class="input-group"><label>Actual Monthly P&I ($)</label><input type="number" id="curPay" value="4000.41">
         </div>
       </div>
 
       <div class="card">
         <h2 class="new-h2">● New Program</h2>
-        <div class="input-group">
-          <label>Loan Amount ($)</label>
-          <input type="number" id="newAmt" value="631075">
+        <div class="input-group"><label>New Loan Amount ($)</label><input type="number" id="newAmt" value="631075">
         </div>
-        <div class="input-group">
-          <label>Interest Rate (%)</label>
-          <input type="number" id="newRate" value="5.99" step="0.01">
-        </div>
-        <div class="input-group">
-          <label>Term (Months)</label>
-          <input type="number" id="newMos" value="360">
-        </div>
-        <div class="input-group">
-          <label>Extra Payment ($)</label>
-          <input type="number" id="newExtra" value="158">
+        <div class="input-group"><label>New Interest Rate (%)</label><input type="number" id="newRate" value="5.99"
+            step="0.001"></div>
+        <div class="input-group"><label>New Term (Months)</label><input type="number" id="newMos" value="360"></div>
+        <div class="input-group"><label>Extra Principal ($)</label><input type="number" id="newExtra" value="400"></div>
+        <div class="input-group" style="margin-top:10px; border-top:1px dashed var(--border-color); padding-top:10px;">
+          <label style="font-weight:700">New Base Payment:</label><span id="newBasePayDisplay"
+            style="font-weight:700">$0.00</span>
         </div>
       </div>
     </div>
 
     <div class="summary-bar">
-      <div class="stat-card">
-        <span>Interest Savings</span>
-        <strong id="sumInterest" class="savings-val">$0</strong>
-      </div>
-      <div class="stat-card">
-        <span>Years Saved</span>
-        <strong id="sumYears" class="savings-val">0.0 Yrs</strong>
-      </div>
-      <div class="stat-card">
-        <span>Monthly P&I Diff</span>
-        <strong id="sumPay">$0</strong>
-      </div>
+      <div class="stat-card"><span>Interest Savings</span><strong id="sumInterest">$0</strong></div>
+      <div class="stat-card"><span>Savings in Years</span><strong id="sumYears">0.00</strong></div>
+      <div class="stat-card"><span>Payment Difference</span><strong id="sumDiff"
+          style="color:var(--text-main)">$0</strong></div>
     </div>
 
     <div class="comparison-grid">
       <div class="table-container">
-        <h3
-          style="padding: 15px; margin: 0; font-size: 0.9rem; background: var(--bg-color); color: var(--current-accent);">
-          CURRENT PROGRAM SCHEDULE</h3>
+        <h3 style="padding:15px;margin:0;font-size:0.85rem;background:var(--bg-color);color:var(--current-accent)">
+          CURRENT AMORTIZATION</h3>
         <table>
           <thead>
             <tr>
@@ -291,10 +252,9 @@
           <tbody id="curBody"></tbody>
         </table>
       </div>
-
       <div class="table-container">
-        <h3 style="padding: 15px; margin: 0; font-size: 0.9rem; background: var(--bg-color); color: var(--new-accent);">
-          NEW PROGRAM SCHEDULE</h3>
+        <h3 style="padding:15px;margin:0;font-size:0.85rem;background:var(--bg-color);color:var(--new-accent)">NEW
+          AMORTIZATION</h3>
         <table>
           <thead>
             <tr>
@@ -312,107 +272,83 @@
   </div>
 
   <script>
-    const fields = ['curAmt', 'curRate', 'curMos', 'newAmt', 'newRate', 'newMos', 'newExtra'];
+    const fields = ['curAmt', 'curRate', 'curMos', 'curPay', 'newAmt', 'newRate', 'newMos', 'newExtra'];
 
     function toggleTheme() {
-      const body = document.body;
-      body.setAttribute('data-theme', body.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
-    }
-
-    function copyLink() {
-      navigator.clipboard.writeText(window.location.href);
-      alert("Scenario link copied!");
+      const b = document.body;
+      b.setAttribute('data-theme', b.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
     }
 
     function syncToUrl() {
-      const params = new URLSearchParams();
-      fields.forEach(id => {
-        const val = document.getElementById(id).value;
-        if (val) params.set(id, val);
-      });
-      window.history.replaceState(null, '', '?' + params.toString());
+      const p = new URLSearchParams();
+      fields.forEach(f => p.set(f, document.getElementById(f).value));
+      window.history.replaceState(null, '', '?' + p.toString());
     }
 
-    function loadFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      fields.forEach(id => {
-        if (params.has(id)) document.getElementById(id).value = params.get(id);
-      });
+    function loadUrl() {
+      const p = new URLSearchParams(window.location.search);
+      fields.forEach(f => { if (p.has(f)) document.getElementById(f).value = p.get(f); });
     }
 
-    function generateSchedule(amt, rate, mos, extra = 0) {
-      const monthlyRate = (rate / 100) / 12;
-      const payment = monthlyRate > 0 ? amt * (monthlyRate * Math.pow(1 + monthlyRate, mos)) / (Math.pow(1 + monthlyRate, mos) - 1) : amt / mos;
+    function generateFullSimulation(amt, rate, mos, extra, manualPay = 0) {
+      const r = (rate / 100) / 12;
+      const basePay = manualPay > 0 ? manualPay : (r > 0 ? amt * (r * Math.pow(1 + r, mos)) / (Math.pow(1 + r, mos) - 1) : amt / mos);
+      let bal = amt, totalI = 0, elapsed = 0, sched = [];
 
-      let balance = amt;
-      let totalInt = 0;
-      let schedule = [];
-
-      for (let i = 1; i <= 600; i++) {
-        if (balance <= 0.01) break;
-        let interestM = balance * monthlyRate;
-        let principalM = (payment - interestM) + extra;
-        if (principalM > balance) principalM = balance;
-
-        balance -= principalM;
-        totalInt += interestM;
-
-        schedule.push({
-          month: i,
-          p: principalM,
-          i: interestM,
-          rem: Math.max(0, balance),
-          totalI: totalInt,
-          basePayment: payment + extra
-        });
+      while (bal > 0.01 && elapsed < 600) {
+        elapsed++;
+        let intM = bal * r;
+        let prinM = (basePay - intM) + extra;
+        if (prinM > bal) prinM = bal;
+        bal -= prinM;
+        totalI += intM;
+        if (elapsed <= 36) sched.push({ month: elapsed, p: prinM, i: intM, rem: Math.max(0, bal), totalI: totalI });
       }
-      return { schedule, totalInt, payment };
+      return { totalI, payoffMonths: elapsed, basePay, sched };
     }
 
     function calculate() {
       syncToUrl();
 
-      const curData = generateSchedule(
-        parseFloat(document.getElementById('curAmt').value) || 0,
-        parseFloat(document.getElementById('curRate').value) || 0,
-        parseInt(document.getElementById('curMos').value) || 0
-      );
+      const cAmt = parseFloat(document.getElementById('curAmt').value) || 0;
+      const cMos = parseInt(document.getElementById('curMos').value) || 0;
+      const cPay = parseFloat(document.getElementById('curPay').value) || 0;
+      const cRate = parseFloat(document.getElementById('curRate').value) || 0;
 
-      const newData = generateSchedule(
-        parseFloat(document.getElementById('newAmt').value) || 0,
-        parseFloat(document.getElementById('newRate').value) || 0,
-        parseInt(document.getElementById('newMos').value) || 0,
-        parseFloat(document.getElementById('newExtra').value) || 0
-      );
+      // Current Total Interest: (Payment * Remaining Mos) - Principal
+      const currentTotalFutureInterest = (cPay * cMos) - cAmt;
+      const curSim = generateFullSimulation(cAmt, cRate, cMos, 0, cPay);
 
-      // Update Summaries
-      document.getElementById('sumInterest').innerText = `$${Math.round(curData.totalInt - newData.totalInt).toLocaleString()}`;
-      document.getElementById('sumYears').innerText = `${((curData.schedule.length - newData.schedule.length) / 12).toFixed(1)} Yrs`;
-      document.getElementById('sumPay').innerText = `$${Math.round(newData.payment - curData.payment).toLocaleString()}`;
+      const nAmt = parseFloat(document.getElementById('newAmt').value) || 0;
+      const nRate = parseFloat(document.getElementById('newRate').value) || 0;
+      const nMos = parseInt(document.getElementById('newMos').value) || 0;
+      const nExtra = parseFloat(document.getElementById('newExtra').value) || 0;
 
-      // Populate Tables
-      const renderTable = (tbodyId, data) => {
-        let html = '';
-        data.schedule.slice(0, 24).forEach(row => { // Showing first 2 years
-          html += `<tr>
-                    <td class="month-cell">${row.month}</td>
-                    <td>$${row.p.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                    <td>$${row.i.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                    <td>$${row.rem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                    <td>$${row.totalI.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                </tr>`;
-        });
-        document.getElementById(tbodyId).innerHTML = html;
+      const newSim = generateFullSimulation(nAmt, nRate, nMos, nExtra);
+
+      // Update Summary
+      document.getElementById('sumInterest').innerText = `$${(currentTotalFutureInterest - newSim.totalI).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+      document.getElementById('sumYears').innerText = ((cMos - newSim.payoffMonths) / 12).toFixed(2);
+      document.getElementById('sumDiff').innerText = (newSim.basePay - cPay).toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+      document.getElementById('newBasePayDisplay').innerText = newSim.basePay.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+
+      const render = (id, data) => {
+        let h = '';
+        data.forEach(r => h += `<tr><td class="month-cell">${r.month}</td>
+                <td>$${r.p.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td>$${r.i.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td>$${r.rem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td>$${r.totalI.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td></tr>`);
+        document.getElementById(id).innerHTML = h;
       };
 
-      renderTable('curBody', curData);
-      renderTable('newBody', newData);
+      render('curBody', curSim.sched);
+      render('newBody', newSim.sched);
     }
 
-    // Init
-    loadFromUrl();
-    calculate();
-    fields.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+    loadUrl(); calculate();
+    fields.forEach(f => document.getElementById(f).addEventListener('input', calculate));
+    function copyLink() { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); }
   </script>
 </body>
 
