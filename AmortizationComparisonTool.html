@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mortgage Comparison Tool</title>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --primary: #2563eb;
+      --current-accent: #0ea5e9;
+      --new-accent: #10b981;
+      --input-bg: #ffffff;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --input-bg: #0f172a;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      cursor: pointer;
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .input-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .current-h2 {
+      color: var(--current-accent);
+    }
+
+    .new-h2 {
+      color: var(--new-accent);
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    input {
+      width: 120px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--input-bg);
+      color: var(--text-main);
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-card span {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .stat-card strong {
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .savings-val {
+      color: var(--new-accent) !important;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    th {
+      background: var(--bg-color);
+      padding: 12px;
+      text-align: right;
+      border-bottom: 2px solid var(--border-color);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px;
+      text-align: right;
+      border-bottom: 1px solid var(--border-color);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .month-cell {
+      text-align: left;
+      font-weight: 700;
+      background: var(--bg-color);
+    }
+
+    @media (max-width: 1000px) {
+
+      .input-section,
+      .comparison-grid,
+      .summary-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body data-theme="light">
+
+  <div class="container">
+    <header>
+      <h1>Mortgage Comparison Tool</h1>
+      <div class="controls">
+        <button onclick="copyLink()">🔗 Copy Link</button>
+        <button onclick="toggleTheme()">🌓 Theme</button>
+      </div>
+    </header>
+
+    <div class="input-section">
+      <div class="card">
+        <h2 class="current-h2">● Current Program</h2>
+        <div class="input-group">
+          <label>Principal ($)</label>
+          <input type="number" id="curAmt" value="623678">
+        </div>
+        <div class="input-group">
+          <label>Interest Rate (%)</label>
+          <input type="number" id="curRate" value="6.125" step="0.125">
+        </div>
+        <div class="input-group">
+          <label>Remaining Months</label>
+          <input type="number" id="curMos" value="312">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="new-h2">● New Program</h2>
+        <div class="input-group">
+          <label>Loan Amount ($)</label>
+          <input type="number" id="newAmt" value="631075">
+        </div>
+        <div class="input-group">
+          <label>Interest Rate (%)</label>
+          <input type="number" id="newRate" value="5.99" step="0.01">
+        </div>
+        <div class="input-group">
+          <label>Term (Months)</label>
+          <input type="number" id="newMos" value="360">
+        </div>
+        <div class="input-group">
+          <label>Extra Payment ($)</label>
+          <input type="number" id="newExtra" value="158">
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="stat-card">
+        <span>Interest Savings</span>
+        <strong id="sumInterest" class="savings-val">$0</strong>
+      </div>
+      <div class="stat-card">
+        <span>Years Saved</span>
+        <strong id="sumYears" class="savings-val">0.0 Yrs</strong>
+      </div>
+      <div class="stat-card">
+        <span>Monthly P&I Diff</span>
+        <strong id="sumPay">$0</strong>
+      </div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="table-container">
+        <h3
+          style="padding: 15px; margin: 0; font-size: 0.9rem; background: var(--bg-color); color: var(--current-accent);">
+          CURRENT PROGRAM SCHEDULE</h3>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Mo</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>Remaining</th>
+              <th>Total Int.</th>
+            </tr>
+          </thead>
+          <tbody id="curBody"></tbody>
+        </table>
+      </div>
+
+      <div class="table-container">
+        <h3 style="padding: 15px; margin: 0; font-size: 0.9rem; background: var(--bg-color); color: var(--new-accent);">
+          NEW PROGRAM SCHEDULE</h3>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Mo</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>Remaining</th>
+              <th>Total Int.</th>
+            </tr>
+          </thead>
+          <tbody id="newBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fields = ['curAmt', 'curRate', 'curMos', 'newAmt', 'newRate', 'newMos', 'newExtra'];
+
+    function toggleTheme() {
+      const body = document.body;
+      body.setAttribute('data-theme', body.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Scenario link copied!");
+    }
+
+    function syncToUrl() {
+      const params = new URLSearchParams();
+      fields.forEach(id => {
+        const val = document.getElementById(id).value;
+        if (val) params.set(id, val);
+      });
+      window.history.replaceState(null, '', '?' + params.toString());
+    }
+
+    function loadFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      fields.forEach(id => {
+        if (params.has(id)) document.getElementById(id).value = params.get(id);
+      });
+    }
+
+    function generateSchedule(amt, rate, mos, extra = 0) {
+      const monthlyRate = (rate / 100) / 12;
+      const payment = monthlyRate > 0 ? amt * (monthlyRate * Math.pow(1 + monthlyRate, mos)) / (Math.pow(1 + monthlyRate, mos) - 1) : amt / mos;
+
+      let balance = amt;
+      let totalInt = 0;
+      let schedule = [];
+
+      for (let i = 1; i <= 600; i++) {
+        if (balance <= 0.01) break;
+        let interestM = balance * monthlyRate;
+        let principalM = (payment - interestM) + extra;
+        if (principalM > balance) principalM = balance;
+
+        balance -= principalM;
+        totalInt += interestM;
+
+        schedule.push({
+          month: i,
+          p: principalM,
+          i: interestM,
+          rem: Math.max(0, balance),
+          totalI: totalInt,
+          basePayment: payment + extra
+        });
+      }
+      return { schedule, totalInt, payment };
+    }
+
+    function calculate() {
+      syncToUrl();
+
+      const curData = generateSchedule(
+        parseFloat(document.getElementById('curAmt').value) || 0,
+        parseFloat(document.getElementById('curRate').value) || 0,
+        parseInt(document.getElementById('curMos').value) || 0
+      );
+
+      const newData = generateSchedule(
+        parseFloat(document.getElementById('newAmt').value) || 0,
+        parseFloat(document.getElementById('newRate').value) || 0,
+        parseInt(document.getElementById('newMos').value) || 0,
+        parseFloat(document.getElementById('newExtra').value) || 0
+      );
+
+      // Update Summaries
+      document.getElementById('sumInterest').innerText = `$${Math.round(curData.totalInt - newData.totalInt).toLocaleString()}`;
+      document.getElementById('sumYears').innerText = `${((curData.schedule.length - newData.schedule.length) / 12).toFixed(1)} Yrs`;
+      document.getElementById('sumPay').innerText = `$${Math.round(newData.payment - curData.payment).toLocaleString()}`;
+
+      // Populate Tables
+      const renderTable = (tbodyId, data) => {
+        let html = '';
+        data.schedule.slice(0, 24).forEach(row => { // Showing first 2 years
+          html += `<tr>
+                    <td class="month-cell">${row.month}</td>
+                    <td>$${row.p.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td>$${row.i.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td>$${row.rem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td>$${row.totalI.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                </tr>`;
+        });
+        document.getElementById(tbodyId).innerHTML = html;
+      };
+
+      renderTable('curBody', curData);
+      renderTable('newBody', newData);
+    }
+
+    // Init
+    loadFromUrl();
+    calculate();
+    fields.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+  </script>
+</body>
+
+</html>
