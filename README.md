@@ -13,3 +13,4 @@ Public Utility Project
 - [Max Withdrawal Calculator](maxWithdrawal.html)
 - [Percentage Off Calculator](percentageOff.html)
 - [Trading Calculation](TradingCalculation.html)
+- [Amortization Comparison Tool](AmortizationComparisonTool.html)
