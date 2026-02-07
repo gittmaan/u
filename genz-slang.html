@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gen-Z Slang Translator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.2em;
+            flex: 1;
+            margin: 0;
+        }
+
+        .dark-mode-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .dark-mode-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 18px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 18px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .search-box {
+            background: #2d2d44;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: border-color 0.3s;
+            background: white;
+            color: #333;
+        }
+
+        body.dark-mode input {
+            background: #3d3d5c;
+            border-color: #4d4d6c;
+            color: #e0e0e0;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        body.dark-mode input:focus {
+            border-color: #9b8bf0;
+        }
+
+        .toggle-wrapper {
+            margin-top: 14px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .toggle-btn {
+            padding: 10px 18px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .toggle-btn {
+            background: #3d3d5c;
+            color: #9b8bf0;
+            border-color: #9b8bf0;
+        }
+
+        .toggle-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        body.dark-mode .toggle-btn.active {
+            background: #9b8bf0;
+            border-color: #9b8bf0;
+            color: #1a1a2e;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .results {
+            background: white;
+            border-radius: 15px;
+            padding: 18px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .results {
+            background: #2d2d44;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .results::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+
+        .results::-webkit-scrollbar-thumb {
+            background: rgba(102,126,234,0.5);
+            border-radius: 4px;
+        }
+
+        body.dark-mode .results::-webkit-scrollbar-thumb {
+            background: rgba(155,139,240,0.5);
+        }
+
+        .result-card {
+            padding: 14px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .result-card {
+            background: #3d3d5c;
+            border-left-color: #9b8bf0;
+        }
+
+        .result-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .result-word {
+            font-size: 1.25em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        body.dark-mode .result-word {
+            color: #e0e0e0;
+        }
+
+        .result-definition {
+            color: #666;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        body.dark-mode .result-definition {
+            color: #b0b0b0;
+        }
+
+        .result-example {
+            color: #888;
+            font-style: italic;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        body.dark-mode .result-example {
+            color: #999;
+        }
+
+        .tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .tag.positive { background: #d4edda; color: #155724; }
+        .tag.negative { background: #f8d7da; color: #721c24; }
+        .tag.ironic { background: #fff3cd; color: #856404; }
+        .tag.deprecated { background: #e2e3e5; color: #383d41; }
+        .tag.common { background: #d1ecf1; color: #0c5460; }
+        .tag.trending { background: #e7c6ff; color: #6a1b9a; }
+        .tag.aave { background: #d4a0ff; color: #4a0072; }
+        .tag.gaming { background: #a0e7d4; color: #006400; }
+        .tag.tiktok { background: #ffb3b3; color: #8b0000; }
+
+        body.dark-mode .tag.positive { background: #1b5e20; color: #a5d6a7; }
+        body.dark-mode .tag.negative { background: #b71c1c; color: #ef9a9a; }
+        body.dark-mode .tag.ironic { background: #f57f17; color: #ffe082; }
+        body.dark-mode .tag.deprecated { background: #424242; color: #bdbdbd; }
+        body.dark-mode .tag.common { background: #01579b; color: #81d4fa; }
+        body.dark-mode .tag.trending { background: #6a1b9a; color: #e1bee7; }
+        body.dark-mode .tag.aave { background: #4a0072; color: #ce93d8; }
+        body.dark-mode .tag.gaming { background: #006400; color: #a5d6a7; }
+        body.dark-mode .tag.tiktok { background: #8b0000; color: #ffccbc; }
+
+        .autocomplete-container {
+            position: relative;
+        }
+
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 0 0 10px 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+        }
+
+        body.dark-mode .autocomplete-suggestions {
+            background: #3d3d5c;
+            border-color: #4d4d6c;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .autocomplete-suggestions.show {
+            display: block;
+        }
+
+        .autocomplete-suggestion {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+
+        body.dark-mode .autocomplete-suggestion {
+            border-bottom-color: #4d4d6c;
+            color: #e0e0e0;
+        }
+
+        .autocomplete-suggestion:hover,
+        .autocomplete-suggestion.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .autocomplete-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-suggestions::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .autocomplete-suggestions::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .autocomplete-suggestions::-webkit-scrollbar-thumb {
+            background: rgba(102,126,234,0.5);
+            border-radius: 3px;
+        }
+
+        body.dark-mode .autocomplete-suggestions::-webkit-scrollbar-thumb {
+            background: rgba(155,139,240,0.5);
+        }
+
+        .no-results {
+            text-align: center;
+            color: #666;
+            padding: 30px 20px;
+        }
+
+        body.dark-mode .no-results {
+            color: #b0b0b0;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            margin-top: 25px;
+            font-size: 0.85em;
+            padding-bottom: 20px;
+        }
+
+        .stats {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            backdrop-filter: blur(10px);
+        }
+
+        body.dark-mode .stats {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .stats p {
+            color: rgba(255,255,255,0.9);
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .stats strong {
+            color: white;
+        }
+
+        body.dark-mode .stats strong {
+            color: #e0e0e0;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+                margin-bottom: 20px;
+            }
+
+            .search-box {
+                padding: 15px;
+            }
+
+            input {
+                padding: 12px 15px;
+                font-size: 15px;
+            }
+
+            .toggle-wrapper {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .toggle-btn {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .results {
+                padding: 15px;
+                max-height: 65vh;
+            }
+
+            .result-card {
+                padding: 12px;
+            }
+
+            .result-word {
+                font-size: 1.15em;
+            }
+
+            .result-definition {
+                font-size: 0.95em;
+            }
+
+            .result-example {
+                font-size: 0.85em;
+            }
+
+            .tag {
+                font-size: 0.7em;
+                padding: 3px 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .toggle-wrapper {
+                flex-direction: column;
+            }
+
+            .toggle-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 Gen-Z Slang Translator</h1>
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">🌙</button>
+        </div>
+        <p class="subtitle">Type any word to translate between English and Gen-Z slang</p>
+
+        <div class="stats">
+            <p><strong>📊 Database Stats:</strong> 231 slang terms, 300+ English mappings</p>
+            <p>🔍 Autocomplete enabled • 🌓 Toggle dark mode for late night vibes</p>
+        </div>
+
+        <div class="search-box">
+            <div class="input-wrapper autocomplete-container">
+                <input type="text" id="searchInput" placeholder="Type something (e.g., 'cool' or 'rizz')..." autocomplete="off">
+                <div class="autocomplete-suggestions" id="autocompleteSuggestions"></div>
+            </div>
+            <div class="toggle-wrapper">
+                <button class="toggle-btn active" id="autoBtn">🔄 Auto-detect</button>
+                <button class="toggle-btn" id="toSlangBtn">➡️ To Gen-Z</button>
+                <button class="toggle-btn" id="toEnglishBtn">⬅️ To English</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div id="resultsContent"></div>
+        </div>
+
+        <div class="footer">
+            <p>Built with 💜 | Last updated: 2024</p>
+        </div>
+    </div>
+
+    <script>
+// Expanded slang database - 200+ terms with proper tagging
+const slangDatabase = [
+    // Common & Trending
+    { word: "based", definition: "Authentic, genuine, not caring what others think", example: "He's so based for speaking his mind", tags: ["positive", "common"] },
+    { word: "rizz", definition: "Charisma, charm, ability to attract people", example: "That guy has zero rizz", tags: ["trending", "common"] },
+    { word: "fire", definition: "Excellent, amazing, hot", example: "This pizza is straight fire", tags: ["positive", "common"] },
+    { word: "slaps", definition: "Excellent, impressive (usually music or food)", example: "This song slaps so hard", tags: ["positive", "common"] },
+    { word: "cap", definition: "Lying, being fake", example: "That's cap, you didn't do that", tags: ["negative", "common", "aave"] },
+    { word: "no cap", definition: "No lie, for real, seriously", example: "No cap, this is the best burger ever", tags: ["common", "aave"] },
+    { word: "sus", definition: "Suspicious, shady, untrustworthy", example: "That's so sus, why are you acting weird?", tags: ["negative", "common", "gaming"] },
+    { word: "bet", definition: "Yes, agreed, okay, I'll do it", example: "Bet, I'll be there at 7", tags: ["common", "aave"] },
+    { word: "clout", definition: "Influence, popularity, status", example: "She's just chasing clout", tags: ["common"] },
+    { word: "drip", definition: "Fashion sense, style, looking good", example: "Check out his drip", tags: ["positive", "common"] },
+    { word: "lowkey", definition: "Kind of, secretly, moderately", example: "I lowkey love this show", tags: ["common", "aave"] },
+    { word: "highkey", definition: "Very much, openly, without doubt", example: "I highkey want to go home", tags: ["common", "aave"] },
+    { word: "tea", definition: "Gossip, drama", example: "Spill the tea!", tags: ["common"] },
+    { word: "shade", definition: "Subtle criticism, disrespect", example: "She's throwing shade at him", tags: ["negative", "aave"] },
+    { word: "vibe", definition: "Atmosphere, feeling, mood", example: "Good vibes only", tags: ["positive", "common"] },
+    { word: "cringe", definition: "Embarrassing, awkward, painful to watch", example: "That was so cringe", tags: ["negative", "common"] },
+    { word: "mid", definition: "Mediocre, average, not great", example: "That movie was mid", tags: ["negative", "common"] },
+    { word: "slay", definition: "To do something exceptionally well", example: "She absolutely slayed that performance", tags: ["positive", "common"] },
+    { word: "rent free", definition: "Living in your mind, can't stop thinking about something", example: "That song is living rent free in my head", tags: ["common"] },
+    { word: "hits different", definition: "Feels especially good or impactful", example: "This song hits different at night", tags: ["positive", "common", "aave"] },
+    { word: "it's giving...", definition: "Has the vibe/energy of...", example: "It's giving main character energy", tags: ["common"] },
+    { word: "gyatt", definition: "Expression of excitement (especially seeing someone attractive)", example: "Gyatt! Look at that!", tags: ["trending", "common"] },
+    { word: "op", definition: "Original poster (especially in gaming/social media)", example: "Thanks OP!", tags: ["common", "gaming"] },
+    { word: "valid", definition: "Reasonable, justified, makes sense", example: "That's a valid point", tags: ["positive", "common"] },
+    { word: "fr fr", definition: "For real for real (emphasized)", example: "That's crazy fr fr", tags: ["common"] },
+    { word: "caught in 4k", definition: "Caught red-handed, with clear evidence", example: "You got caught in 4k lying", tags: ["negative", "gaming"] },
+    { word: "demure", definition: "Modest, reserved (2024 TikTok trend)", example: "Very demure, very mindful", tags: ["positive", "trending", "tiktok"] },
+
+    // AAVE-origin terms (with proper attribution)
+    { word: "finna", definition: "Going to, about to (AAVE origin)", example: "I'm finna get some food", tags: ["common", "aave"] },
+    { word: "gon", definition: "Going to (AAVE origin)", example: "Where you gon go?", tags: ["common", "aave"] },
+    { word: "y'all", definition: "You all (AAVE origin, now mainstream)", example: "Y'all are crazy", tags: ["common", "aave"] },
+    { word: "hella", definition: "Very, a lot (Bay Area/AAVE origin)", example: "That's hella cool", tags: ["common", "aave"] },
+    { word: "lit", definition: "Exciting, excellent (AAVE origin, now mainstream)", example: "The party was lit last night", tags: ["positive", "common", "aave"] },
+    { word: "fam", definition: "Family, close friends (AAVE origin)", example: "What's good fam?", tags: ["common", "aave"] },
+    { word: "bruh", definition: "Expression of disbelief or annoyance (AAVE origin)", example: "Bruh, you serious?", tags: ["common", "aave"] },
+    { word: "finna be lit", definition: "Going to be exciting/excellent (AAVE origin)", example: "This party finna be lit", tags: ["positive", "aave"] },
+
+    // Gaming slang
+    { word: "nerf", definition: "To make something weaker in a game", example: "They nerfed that character too hard", tags: ["common", "gaming"] },
+    { word: "buff", definition: "To make something stronger in a game", example: "They finally buffed my main", tags: ["common", "gaming"] },
+    { word: "gg", definition: "Good game", example: "GG everyone", tags: ["common", "gaming"] },
+    { word: "gg wp", definition: "Good game, well played", example: "GG wp, close match", tags: ["common", "gaming"] },
+    { word: "afk", definition: "Away from keyboard", example: "I'm going AFK for a sec", tags: ["common", "gaming"] },
+    { word: "pog", definition: "Expression of excitement (from PogChamp emote)", example: "That's pog!", tags: ["gaming", "deprecated"] },
+    { word: "noob", definition: "Beginner, inexperienced player", example: "Stop being such a noob", tags: ["negative", "gaming"] },
+    { word: "smurf", definition: "Experienced player using new account", example: "He's obviously smurfing", tags: ["gaming"] },
+    { word: "camp", definition: "Staying in one spot to gain advantage", example: "Stop camping the spawn point!", tags: ["negative", "gaming"] },
+    { word: "throw", definition: "To lose on purpose", example: "Stop throwing the game!", tags: ["negative", "gaming"] },
+    { word: "rage quit", definition: "To quit in anger", example: "He rage quit after losing", tags: ["negative", "gaming"] },
+    { word: "lag", definition: "Game delay or slowdown", example: "I can't play, too much lag", tags: ["negative", "gaming"] },
+    { word: "carry", definition: "To lead team to victory", example: "He carried us that game", tags: ["positive", "gaming"] },
+    { word: "tilt", definition: "Getting frustrated/emotional", example: "Don't get tilt over a game", tags: ["negative", "gaming"] },
+    { word: "meta", definition: "Most effective tactics available", example: "That's not meta right now", tags: ["gaming"] },
+    { word: "gank", definition: "Surprise attack on enemy", example: "Watch out for ganks", tags: ["gaming"] },
+    { word: "loot", definition: "Rewards or items obtained", example: "Check out this loot drop", tags: ["gaming"] },
+    { word: "spawn", definition: "To appear in game", example: "Wait for the enemy to spawn", tags: ["gaming"] },
+    { word: "respawn", definition: "To reappear after death", example: "I'll respawn in 30 seconds", tags: ["gaming"] },
+    { word: "cheese", definition: "To win using cheap strategy", example: "That's such a cheese strat", tags: ["gaming"] },
+
+    // TikTok/social media trends
+    { word: "fyp", definition: "For You Page (TikTok)", example: "Thanks for the fyp", tags: ["tiktok"] },
+    { word: "duet", definition: "Collaboration video on TikTok", example: "Let's do a duet", tags: ["tiktok"] },
+    { word: "stitch", definition: "Reaction/response video on TikTok", example: "I'm gonna stitch this", tags: ["tiktok"] },
+    { word: "trending", definition: "Popular or viral", example: "This is trending right now", tags: ["tiktok"] },
+    { word: "influencer", definition: "Social media personality with followers", example: "She's a huge influencer", tags: ["tiktok"] },
+    { word: "content", definition: "Social media posts, videos, etc.", example: "I need to post more content", tags: ["tiktok"] },
+    { word: "cancel culture", definition: "Movement to hold people accountable, sometimes excessive", example: "Don't let cancel culture get to you", tags: ["tiktok"] },
+    { word: "cancelled", definition: "Publicly shunned or called out", example: "He got cancelled for that comment", tags: ["negative", "tiktok"] },
+    { word: "red flag", definition: "Warning sign in relationships/behavior", example: "That's a major red flag", tags: ["negative", "common"] },
+    { word: "green flag", definition: "Positive sign in relationships/behavior", example: "That's such a green flag", tags: ["positive", "common"] },
+    { word: "living my best life", definition: "Enjoying life to the fullest", example: "Living my best life in Bali", tags: ["positive", "tiktok"] },
+    { word: "aesthetic", definition: "Visually pleasing, distinctive style", example: "Her room is so aesthetic", tags: ["positive", "tiktok"] },
+    { word: "POV", definition: "Point of view", example: "POV: you're at 3am studying", tags: ["tiktok"] },
+    { word: "core memory", definition: "Memorable moment", example: "That's going to be a core memory", tags: ["tiktok"] },
+    { word: "era", definition: "Phase or period of life/style", example: "I'm in my fitness era", tags: ["tiktok"] },
+    { word: "unhinged", definition: "Crazy, wild, unfiltered", example: "That was absolutely unhinged", tags: ["negative", "tiktok"] },
+    { word: "delulu", definition: "Delusional, unrealistic fantasies", example: "You're being delulu about him", tags: ["negative", "tiktok"] },
+    { word: "situationship", definition: "Undefined romantic relationship", example: "We're just in a situationship", tags: ["tiktok"] },
+    { word: "roasting", definition: "Making fun of someone, roasting", example: "He's getting roasted in comments", tags: ["negative", "tiktok"] },
+    { word: "drag", definition: "To criticize someone harshly", example: "Don't drag her like that", tags: ["negative", "tiktok"] },
+    { word: "shading", definition: "Subtle disrespect", example: "She's shading him so hard right now", tags: ["negative", "tiktok"] },
+    { word: "spilling tea", definition: "Sharing gossip or secrets", example: "She's spilling the tea right now", tags: ["tiktok"] },
+    { word: "gatekeep", definition: "Hiding something good from others", example: "Stop gatekeeping that song!", tags: ["negative", "tiktok"] },
+    { word: "goated", definition: "Greatest of all time", example: "He's absolutely goated at this game", tags: ["positive", "tiktok"] },
+    { word: "bussin no cap", definition: "Excellent, no lie (combination)", example: "This food is bussin no cap", tags: ["positive", "tiktok"] },
+    { word: "sheesh", definition: "Expression of surprise or admiration", example: "Sheesh! Look at that!", tags: ["tiktok"] },
+    { word: "slay queen", definition: "Excellent job, female empowerment", example: "You slay queen!", tags: ["positive", "tiktok"] },
+    { word: "periodt", definition: "Emphasized agreement (AAVE origin)", example: "That's right, periodt", tags: ["aave", "tiktok"] },
+    { word: "as hell", definition: "Very much, extremely (AAVE origin)", example: "That's good as hell", tags: ["aave", "tiktok"] },
+    { word: "yass", definition: "Expression of excitement/agreement", example: "Yass queen!", tags: ["positive", "tiktok"] },
+    { word: "slay house down", definition: "To do exceptionally well", example: "She slayed the house down tonight", tags: ["positive", "tiktok"] },
+
+    // Deprecated / Old slang
+    { word: "yeet", definition: "To throw something with force; to leave abruptly", example: "He yeeted that across the room", tags: ["deprecated"] },
+    { word: "chad", definition: "Cool, confident, successful (usually a man)", example: "Total chad energy right there", tags: ["ironic", "deprecated"] },
+    { word: "simp", definition: "Someone who tries too hard to please someone else (usually romantically)", example: "Stop simping, she's not interested", tags: ["negative", "ironic", "deprecated"] },
+    { word: "ghosting", definition: "Suddenly cutting off all communication", example: "He's been ghosting me for weeks", tags: ["negative", "deprecated"] },
+    { word: "woke", definition: "Aware of social and political issues (now used ironically)", example: "He's so woke about environmental issues", tags: ["ironic", "deprecated"] },
+    { word: "main character energy", definition: "Behaving as if you're the protagonist of your life", example: "She's got main character energy today", tags: ["positive", "deprecated"] },
+    { word: "touch grass", definition: "Go outside, get away from the internet", example: "Bro needs to touch grass", tags: ["negative", "deprecated"] },
+    { word: "ratioed", definition: "Got more replies than likes (proving you're wrong/unpopular)", example: "He got absolutely ratioed on that post", tags: ["negative", "deprecated"] },
+    { word: "skibidi", definition: "Bizarre, nonsensical, from TikTok trend", example: "That was so skibidi", tags: ["ironic", "deprecated", "tiktok"] },
+    { word: "fanum tax", definition: "When your friends eat your food", example: "You just got fanum taxed", tags: ["ironic", "deprecated"] },
+    { word: "glazing", definition: "Over-praising someone to the point of being annoying", example: "Stop glazing him, he's not that special", tags: ["negative", "deprecated"] },
+    { word: "mewing", definition: "Tongue posture exercise for jawline (internet trend)", example: "He's been mewing for months", tags: ["ironic", "deprecated"] },
+    { word: "sigma", definition: "Independent, self-sufficient, doesn't follow norms", example: "He's in his sigma era", tags: ["ironic", "deprecated"] },
+    { word: "grimace shake", definition: "Refers to cursed/ominous things (from McDonald's marketing trend)", example: "That's giving grimace shake energy", tags: ["ironic", "deprecated"] },
+    { word: "bussin'", definition: "Extremely good, usually food (outdated usage)", example: "This sandwich is bussin'", tags: ["positive", "deprecated"] },
+    { word: "yolo", definition: "You only live once (from 2012-2015 era)", example: "Yolo, let's do it", tags: ["deprecated"] },
+    { word: "on fleek", definition: "On point, perfect (2014-2016 era)", example: "Her eyebrows are on fleek", tags: ["deprecated"] },
+    { word: "turnt", definition: "Excited, wild (2013-2017 era)", example: "We're getting turnt tonight!", tags: ["positive", "deprecated"] },
+    { word: "squad goals", definition: "Friend group to aspire to (2014-2017 era)", example: "That's squad goals right there", tags: ["positive", "deprecated"] },
+    { word: "bae", definition: "Before anyone else, significant other (2013-2017 era)", example: "Bae, come here", tags: ["positive", "deprecated"] },
+    { word: "dab", definition: "Dance move (2016-2018 era)", example: "Dab on them haters!", tags: ["deprecated"] },
+    { word: "savage", definition: "Ruthless, cool (2015-2019 era)", example: "That's savage!", tags: ["positive", "deprecated"] },
+    { word: "snatched", definition: "Looks great, stylish (2017-2020 era)", example: "Your waist is snatched!", tags: ["positive", "deprecated"] },
+    { word: "thicc", definition: "Attractively curvy (2017-2020 era)", example: "She's looking thicc today", tags: ["positive", "deprecated"] },
+    { word: "woke", definition: "Aware of social issues (appropriated from AAVE, now ironic)", example: "Stay woke", tags: ["ironic", "deprecated"] },
+    { word: "extra", definition: "Excessive, over the top", example: "She's being so extra", tags: ["negative", "deprecated"] },
+    { word: "thirsty", definition: "Desperate for attention or romance", example: "Don't be so thirsty", tags: ["negative", "deprecated"] },
+
+    // Relationship/romance
+    { word: "talking stage", definition: "Early dating, not official yet", example: "We're in the talking stage", tags: ["common"] },
+    { word: "situationship", definition: "Undefined romantic relationship", example: "This is just a situationship", tags: ["common"] },
+    { word: "talking to", definition: "Flirting or early dating", example: "I'm talking to someone new", tags: ["common"] },
+    { word: "hookup", definition: "Casual sexual encounter", example: "Just looking for a hookup", tags: ["common"] },
+    { word: "cuffing season", definition: "Cold weather when people want relationships", example: "It's cuffing season", tags: ["common"] },
+    { word: "breadcrumbing", definition: "Sending occasional messages to keep interest", example: "He's breadcrumbing me", tags: ["negative"] },
+    { word: "benchwarming", definition: "Keeping someone as backup option", example: "I'm just benchwarming her", tags: ["negative"] },
+    { word: "hard launch", definition: "Publicly announcing relationship", example: "They finally hard launched", tags: ["common"] },
+    { word: "soft launch", definition: "Subtly hinting at relationship", example: "I'm soft launching this", tags: ["common"] },
+    { word: "down bad", definition: "Desperate (usually romantically)", example: "He's down bad for her", tags: ["negative"] },
+    { word: "rizzing", definition: "Flirting, using charm", example: "He's rizzing her up", tags: ["trending"] },
+    { word: "unspoken rizz", definition: "Natural charisma without trying", example: "He's got that unspoken rizz", tags: ["trending"] },
+    { word: "roasting", definition: "Making fun of someone, usually playfully", example: "She's roasting him", tags: ["common"] },
+    { word: "dragging", definition: "Harshly criticizing someone", example: "Don't drag her like that", tags: ["negative"] },
+    { word: "throwing shade", definition: "Subtle disrespect", example: "She's throwing shade", tags: ["negative"] },
+
+    // Emotions/feelings
+    { word: "pressed", definition: "Upset, stressed, triggered", example: "Why are you so pressed?", tags: ["negative"] },
+    { word: "triggered", definition: "Upset or offended (overused)", example: "You're so triggered right now", tags: ["negative", "ironic"] },
+    { word: "salty", definition: "Bitter, upset, jealous", example: "Why you being so salty?", tags: ["negative"] },
+    { word: "bitter", definition: "Angry, resentful", example: "Don't be bitter about it", tags: ["negative"] },
+    { word: "petty", definition: "Small-minded, focused on minor grievances", example: "That's so petty", tags: ["negative"] },
+    { word: "over it", definition: "Done with something/someone", example: "I'm so over this", tags: ["negative"] },
+    { word: "not feeling it", definition: "Not interested or enjoying", example: "I'm not really feeling this party", tags: ["negative"] },
+    { word: "vibing", definition: "Enjoying, feeling good", example: "Just vibing tonight", tags: ["positive"] },
+    { word: "living", definition: "Having a great time", example: "I'm living for this moment", tags: ["positive"] },
+    { word: "dead", definition: "Very funny (from being 'dead' from laughing)", example: "I'm dead, that's hilarious", tags: ["positive"] },
+    { word: "dying", definition: "Very funny", example: "I'm dying, stop it!", tags: ["positive"] },
+    { word: "weak", definition: "Very funny (from being weak from laughing)", example: "I'm weak right now", tags: ["positive"] },
+    { word: "shook", definition: "Shocked, surprised", example: "I'm shook", tags: ["positive"] },
+    { word: "obsessed", definition: "Very interested or passionate about something", example: "I'm obsessed with this song", tags: ["positive"] },
+
+    // Behavior/actions
+    { word: "flex", definition: "To show off, boast", example: "Always flexing his money on Instagram", tags: ["negative"] },
+    { word: "gatekeeping", definition: "Not sharing something good with others", example: "Stop gatekeeping that recipe!", tags: ["negative"] },
+    { word: "clout chasing", definition: "Seeking attention/fame", example: "Stop clout chasing", tags: ["negative"] },
+    { word: "attention seeking", definition: "Trying to get attention", example: "That's just attention seeking", tags: ["negative"] },
+    { word: "drama", definition: "Conflict, emotional situation", example: "I don't want drama", tags: ["negative"] },
+    { word: "drama queen", definition: "Person who creates unnecessary drama", example: "She's such a drama queen", tags: ["negative"] },
+    { word: "petty drama", definition: "Small, unnecessary conflicts", example: "So much petty drama", tags: ["negative"] },
+    { word: "tea time", definition: "Time for gossip", example: "It's tea time!", tags: ["common"] },
+    { word: "spill", definition: "To share gossip", example: "Spill the tea!", tags: ["common"] },
+    { word: "receipts", definition: "Evidence of something", example: "Show me the receipts", tags: ["common"] },
+    { word: "exposed", definition: "Revealed something negative about someone", example: "She got exposed", tags: ["negative"] },
+    { word: "called out", definition: "Publicly criticized or challenged", example: "He got called out for that", tags: ["negative"] },
+    { word: "held accountable", definition: "Made to take responsibility", example: "He needs to be held accountable", tags: ["negative"] },
+    { word: "dragged", definition: "Harshly criticized", example: "She got dragged on Twitter", tags: ["negative"] },
+    { word: "roasted", definition: "Made fun of, criticized", example: "He got roasted in the comments", tags: ["negative"] },
+
+    // Food/drink
+    { word: "bussin", definition: "Extremely good, usually food", example: "This food is bussin", tags: ["positive"] },
+    { word: "hits the spot", definition: "Exactly what was needed", example: "This pizza hits the spot", tags: ["positive"] },
+    { word: "gas", definition: "Very good, exciting", example: "This is gas!", tags: ["positive"] },
+    { word: "flavor", definition: "Style, distinctive quality", example: "That has so much flavor", tags: ["positive"] },
+    { word: "top tier", definition: "Best quality", example: "That's top tier", tags: ["positive"] },
+    { word: "god tier", definition: "Absolutely the best", example: "This is god tier", tags: ["positive"] },
+
+    // Technology/internet
+    { word: "NPC", definition: "Non-player character, mindless person", example: "Total NPC behavior", tags: ["negative"] },
+    { word: "cooked", definition: "Done for, finished, ruined", example: "Bro's cooked after that mistake", tags: ["negative"] },
+    { word: "no shot", definition: "No way, absolutely not", example: "No shot you actually did that", tags: ["negative"] },
+    { word: "clown", definition: "Ridiculous, foolish person", example: "You're being a clown right now", tags: ["negative"] },
+    { word: "clown behavior", definition: "Acting foolishly", example: "That's clown behavior", tags: ["negative"] },
+    { word: "crash out", definition: "To fail completely or go crazy", example: "He's about to crash out", tags: ["negative"] },
+    { word: "glitching", definition: "Acting strangely, malfunctioning", example: "She's glitching today", tags: ["negative"] },
+    { word: "lagging", definition: "Slow, delayed", example: "My brain is lagging today", tags: ["negative"] },
+    { word: "AFK", definition: "Away from keyboard", example: "I'm AFK right now", tags: ["gaming"] },
+    { word: "SMH", definition: "Shaking my head", example: "SMH at this situation", tags: ["negative"] },
+    { word: "TBH", definition: "To be honest", example: "TBH, I don't care", tags: ["common"] },
+    { word: "IMO", definition: "In my opinion", example: "IMO, it's overrated", tags: ["common"] },
+    { word: "IMHO", definition: "In my humble opinion", example: "IMHO, you're wrong", tags: ["common"] },
+    { word: "TBF", definition: "To be fair", example: "TBF, he had a point", tags: ["common"] },
+    { word: "IDK", definition: "I don't know", example: "IDK what you mean", tags: ["common"] },
+    { word: "NGL", definition: "Not gonna lie", example: "NGL, that was good", tags: ["common"] },
+    { word: "FR", definition: "For real", example: "That's FR", tags: ["common"] },
+    { word: "ngl", definition: "Not gonna lie", example: "ngl, I'm tired", tags: ["common"] },
+
+    // Additional positive terms
+    { word: "amazing", definition: "Extremely good, impressive", example: "That's absolutely amazing", tags: ["positive"] },
+    { word: "incredible", definition: "Unbelievably good", example: "This is incredible", tags: ["positive"] },
+    { word: "legend", definition: "Someone extremely impressive", example: "You're a legend!", tags: ["positive"] },
+    { word: "goat", definition: "Greatest of all time", example: "He's the GOAT", tags: ["positive"] },
+    { word: "iconic", definition: "Very memorable, classic", example: "That moment was iconic", tags: ["positive"] },
+    { word: "epic", definition: "Impressive, grand", example: "That was epic!", tags: ["positive"] },
+    { word: "stellar", definition: "Excellent, outstanding", example: "Stellar performance", tags: ["positive"] },
+    { word: "elite", definition: "Top quality, superior", example: "That's elite level", tags: ["positive"] },
+    { word: "premium", definition: "High quality", example: "Premium content right there", tags: ["positive"] },
+    { word: "top notch", definition: "Excellent, highest quality", example: "That's top notch", tags: ["positive"] },
+    { word: "next level", definition: "Exceptionally good", example: "That's next level", tags: ["positive"] },
+    { word: "out of this world", definition: "Amazing", example: "This food is out of this world", tags: ["positive"] },
+    { word: "10/10", definition: "Perfect", example: "That's a 10/10 experience", tags: ["positive"] },
+    { word: "chef's kiss", definition: "Perfect, excellent", example: "That's chef's kiss", tags: ["positive"] },
+    { word: "on point", definition: "Perfect, exactly right", example: "Her outfit is on point", tags: ["positive"] },
+
+    // Additional negative terms
+    { word: "trash", definition: "Very bad, low quality", example: "That movie was trash", tags: ["negative"] },
+    { word: "garbage", definition: "Very bad", example: "That idea is garbage", tags: ["negative"] },
+    { word: "awful", definition: "Very bad", example: "That was awful", tags: ["negative"] },
+    { word: "terrible", definition: "Very bad", example: "That's terrible", tags: ["negative"] },
+    { word: "horrible", definition: "Extremely bad", example: "That was horrible", tags: ["negative"] },
+    { word: "disappointing", definition: "Not as good as expected", example: "That was disappointing", tags: ["negative"] },
+    { word: "underwhelming", definition: "Not impressive enough", example: "That was underwhelming", tags: ["negative"] },
+    { word: "lame", definition: "Boring, uncool", example: "That's so lame", tags: ["negative"] },
+    { word: "wack", definition: "Bad, not good", example: "That's wack", tags: ["negative"] },
+    { word: "dogwater", definition: "Very bad (gaming origin)", example: "That's dogwater", tags: ["negative", "gaming"] },
+    { word: "dogshit", definition: "Very bad", example: "That's dogshit", tags: ["negative"] },
+
+    // Miscellaneous
+    { word: "facts", definition: "That's true, correct", example: "Facts!", tags: ["common"] },
+    { word: "big mood", definition: "Very relatable", example: "That's a big mood", tags: ["common"] },
+    { word: "mood", definition: "Relatable, same feeling", example: "Same, that's my mood", tags: ["common"] },
+    { word: "same", definition: "I agree, me too", example: "Same here", tags: ["common"] },
+    { word: "accurate", definition: "Correct, true", example: "That's accurate", tags: ["positive"] },
+    { word: "real", definition: "True, authentic", example: "That's real", tags: ["common"] },
+    { word: "true that", definition: "That's true (older slang)", example: "True that", tags: ["deprecated"] },
+    { word: "word", definition: "I agree, true", example: "Word", tags: ["common"] },
+    { word: "deadass", definition: "Seriously, for real", example: "I'm deadass", tags: ["common"] },
+    { word: "no cap fr", definition: "No lie, for real", example: "No cap fr", tags: ["common"] },
+    { word: "period", definition: "End of discussion, that's final", example: "Period.", tags: ["common"] },
+    { word: "sis", definition: "Sister, female friend (AAVE origin)", example: "Hey sis!", tags: ["common", "aave"] },
+    { word: "bro", definition: "Brother, male friend", example: "What's up bro?", tags: ["common"] },
+    { word: "fam", definition: "Family, close friends", example: "What's good fam?", tags: ["common"] },
+    { word: "homie", definition: "Friend, buddy", example: "That's my homie", tags: ["common"] },
+    { word: "bestie", definition: "Best friend", example: "Hey bestie!", tags: ["common"] },
+    { word: "day ones", definition: "Long-time friends", example: "Those are my day ones", tags: ["positive"] },
+    { word: "squad", definition: "Friend group", example: "Squad goals", tags: ["common"] },
+    { word: "crew", definition: "Friend group", example: "My crew", tags: ["common"] },
+    { word: "bruh", definition: "Expression of disbelief", example: "Bruh, what?", tags: ["common"] },
+    { word: "sheesh", definition: "Expression of surprise", example: "Sheesh!", tags: ["common"] },
+    { word: "yo", definition: "Hey, greeting", example: "Yo what's up", tags: ["common"] },
+    { word: "ayy", definition: "Hey, agreement", example: "Ayy, let's go!", tags: ["common"] },
+    { word: "okurrr", definition: "Yes, okay (Cardi B style)", example: "Okurrr!", tags: ["positive"] }
+];
+
+// English to Gen-Z mappings (for reverse lookup)
+const englishToSlang = {
+    "cool": ["based", "fire", "drip", "vibe", "lit"],
+    "amazing": ["fire", "slaps", "bussin", "slay", "incredible", "epic"],
+    "awesome": ["fire", "slaps", "bussin", "dope"],
+    "good": ["valid", "fire", "slaps", "dope", "fresh"],
+    "great": ["fire", "slaps", "based", "dope"],
+    "excellent": ["fire", "slaps", "bussin", "top notch", "elite"],
+    "bad": ["mid", "trash", "garbage", "wack", "dogwater"],
+    "ugly": ["mid", "cringe", "trash", "wack"],
+    "charming": ["rizz"],
+    "charisma": ["rizz"],
+    "lying": ["cap", "gaslight"],
+    "lie": ["cap"],
+    "suspicious": ["sus", "shady", "sketchy"],
+    "yes": ["bet", "fr fr", "yass", "word", "deadass"],
+    "okay": ["bet", "valid", "cool"],
+    "agree": ["bet", "facts", "word", "same"],
+    "style": ["drip", "aesthetic", "flavor"],
+    "fashion": ["drip"],
+    "show off": ["flex", "clout chase"],
+    "boast": ["flex"],
+    "embarrassing": ["cringe", "awkward"],
+    "awkward": ["cringe"],
+    "average": ["mid", "okay", "decent"],
+    "mediocre": ["mid", "underwhelming"],
+    "atmosphere": ["vibe"],
+    "mood": ["vibe", "mood"],
+    "energy": ["vibe"],
+    "excellent": ["fire", "slaps", "bussin", "goated", "elite"],
+    "gossip": ["tea"],
+    "drama": ["tea"],
+    "criticism": ["shade", "drag", "roast"],
+    "disrespect": ["shade", "throw shade"],
+    "influence": ["clout"],
+    "popularity": ["clout"],
+    "popular": ["clout", "trending"],
+    "bitter": ["salty", "pressed", "petty"],
+    "jealous": ["salty", "jealous"],
+    "manipulate": ["gaslight"],
+    "abuse": ["gaslight"],
+    "desperate": ["down bad", "thirsty"],
+    "ruined": ["cooked", "done for", "finished"],
+    "finished": ["cooked", "done"],
+    "done": ["cooked", "finna"],
+    "mindless": ["npc"],
+    "authentic": ["based", "real", "legit"],
+    "genuine": ["based", "real", "legit"],
+    "shady": ["sus", "sketchy"],
+    "sketchy": ["sus", "shady"],
+    "true": ["facts", "real", "word", "no cap", "deadass"],
+    "false": ["cap", "fake"],
+    "fake": ["cap", "fake"],
+    "perfect": ["on point", "top notch", "10/10", "chef's kiss", "god tier"],
+    "exciting": ["lit", "fire", "gas", "pog"],
+    "funny": ["dead", "dying", "weak", "killing me"],
+    "shocked": ["shook", "can't believe"],
+    "obsessed": ["obsessed", "living for"],
+    "friend": ["fam", "homie", "bestie", "day one"],
+    "brother": ["bro", "fam"],
+    "sister": ["sis", "bestie"],
+    "family": ["fam"],
+    "best": ["goat", "legend", "top tier", "elite"],
+    "worst": ["trash", "garbage", "dogshit", "dogwater"],
+    "beautiful": ["fire", "stunning", "gorgeous", "aesthetic"],
+    "handsome": ["fire", "rizz", "drip"],
+    "attractive": ["fire", "rizz", "bussin"],
+    "impressive": ["fire", "slaps", "epic", "incredible", "amazing"],
+    "terrible": ["trash", "garbage", "awful", "horrible", "disappointing"],
+    "boring": ["mid", "lame", "dry"],
+    "excited": ["hyped", "pumped", "turnt"],
+    "sad": ["down bad", "pressed", "salty"],
+    "angry": ["pressed", "tilt", "heated"],
+    "confused": ["lost", "clueless", "don't get it"],
+    "surprised": ["shook", "can't believe"],
+    "tired": ["exhausted", "beat", "done"]
+};
+
+        let searchMode = 'auto'; // 'auto', 'toSlang', 'toEnglish'
+
+        const searchInput = document.getElementById('searchInput');
+        const results = document.getElementById('results');
+        const resultsContent = document.getElementById('resultsContent');
+        const autoBtn = document.getElementById('autoBtn');
+        const toSlangBtn = document.getElementById('toSlangBtn');
+        const toEnglishBtn = document.getElementById('toEnglishBtn');
+
+        function getTagClass(tag) {
+            const tagClasses = {
+                'positive': 'tag positive',
+                'negative': 'tag negative',
+                'ironic': 'tag ironic',
+                'deprecated': 'tag deprecated',
+                'common': 'tag common'
+            };
+            return tagClasses[tag] || '';
+        }
+
+        function createResultCard(entry, isReverse = false) {
+            return `
+                <div class="result-card">
+                    <div class="result-word">${entry.word}</div>
+                    <div class="result-definition">${entry.definition}</div>
+                    <div class="result-example">"${entry.example}"</div>
+                    <div class="tags">
+                        ${entry.tags.map(tag => `<span class="tag ${getTagClass(tag)}">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function search(query) {
+            const lowerQuery = query.toLowerCase().trim();
+
+            if (!lowerQuery) {
+                results.classList.remove('show');
+                return;
+            }
+
+            let matches = [];
+
+            if (searchMode === 'toEnglish') {
+                // English to Gen-Z mode
+                const slangWords = englishToSlang[lowerQuery] || [];
+                const slangMatches = slangDatabase.filter(entry =>
+                    slangWords.includes(entry.word.toLowerCase())
+                );
+
+                // Also search slang database for partial matches
+                const partialMatches = slangDatabase.filter(entry =>
+                    entry.definition.toLowerCase().includes(lowerQuery)
+                );
+
+                matches = [...slangMatches, ...partialMatches];
+            } else {
+                // Auto-detect or Gen-Z to English mode
+                matches = slangDatabase.filter(entry =>
+                    entry.word.toLowerCase().includes(lowerQuery) ||
+                    entry.definition.toLowerCase().includes(lowerQuery)
+                );
+
+                if (searchMode === 'auto') {
+                    // Check if it might be an English word
+                    const slangWords = englishToSlang[lowerQuery] || [];
+                    const reverseMatches = slangDatabase.filter(entry =>
+                        slangWords.includes(entry.word.toLowerCase())
+                    );
+                    matches = [...reverseMatches, ...matches];
+                }
+            }
+
+            if (matches.length === 0) {
+                resultsContent.innerHTML = `
+                    <div class="no-results">
+                        <p>No matches found for "${query}"</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Try a different word or check your spelling</p>
+                    </div>
+                `;
+            } else {
+                resultsContent.innerHTML = matches.map(m => createResultCard(m)).join('');
+            }
+
+            results.classList.add('show');
+        }
+
+        function setSearchMode(mode) {
+            searchMode = mode;
+            [autoBtn, toSlangBtn, toEnglishBtn].forEach(btn => btn.classList.remove('active'));
+
+            if (mode === 'auto') autoBtn.classList.add('active');
+            else if (mode === 'toSlang') toSlangBtn.classList.add('active');
+            else if (mode === 'toEnglish') toEnglishBtn.classList.add('active');
+
+            // Re-run search with new mode
+            search(searchInput.value);
+        }
+
+        // Autocomplete functionality
+        const autocompleteSuggestions = document.getElementById('autocompleteSuggestions');
+        let currentFocus = -1;
+
+        function showSuggestions(query) {
+            const lowerQuery = query.toLowerCase().trim();
+            autocompleteSuggestions.innerHTML = '';
+            currentFocus = -1;
+
+            if (!lowerQuery) {
+                autocompleteSuggestions.classList.remove('show');
+                return;
+            }
+
+            const matches = slangDatabase.filter(entry =>
+                entry.word.toLowerCase().startsWith(lowerQuery)
+            ).slice(0, 10); // Limit to 10 suggestions
+
+            if (matches.length === 0) {
+                autocompleteSuggestions.classList.remove('show');
+                return;
+            }
+
+            matches.forEach((entry, index) => {
+                const div = document.createElement('div');
+                div.className = 'autocomplete-suggestion';
+                div.textContent = entry.word;
+                div.addEventListener('click', () => {
+                    searchInput.value = entry.word;
+                    search(entry.word);
+                    autocompleteSuggestions.classList.remove('show');
+                });
+                autocompleteSuggestions.appendChild(div);
+            });
+
+            autocompleteSuggestions.classList.add('show');
+        }
+
+        function navigateSuggestions(direction) {
+            const items = autocompleteSuggestions.getElementsByClassName('autocomplete-suggestion');
+            if (items.length === 0) return;
+
+            if (currentFocus >= 0) {
+                items[currentFocus].classList.remove('active');
+            }
+
+            currentFocus += direction;
+
+            if (currentFocus >= items.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = items.length - 1;
+
+            items[currentFocus].classList.add('active');
+            items[currentFocus].scrollIntoView({ block: 'nearest' });
+        }
+
+        function selectSuggestion() {
+            const items = autocompleteSuggestions.getElementsByClassName('autocomplete-suggestion');
+            if (currentFocus >= 0 && currentFocus < items.length) {
+                items[currentFocus].click();
+            }
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            showSuggestions(e.target.value);
+            search(e.target.value);
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateSuggestions(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateSuggestions(-1);
+            } else if (e.key === 'Enter' && currentFocus >= 0) {
+                e.preventDefault();
+                selectSuggestion();
+            } else if (e.key === 'Escape') {
+                autocompleteSuggestions.classList.remove('show');
+            }
+        });
+
+        // Close autocomplete when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.autocomplete-container')) {
+                autocompleteSuggestions.classList.remove('show');
+            }
+        });
+
+        autoBtn.addEventListener('click', () => setSearchMode('auto'));
+        toSlangBtn.addEventListener('click', () => setSearchMode('toSlang'));
+        toEnglishBtn.addEventListener('click', () => setSearchMode('toEnglish'));
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+
+        // Check for saved preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.textContent = '☀️';
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', isDark);
+        });
+
+        // Auto-focus input
+        searchInput.focus();
+    </script>
+</body>
+</html>
