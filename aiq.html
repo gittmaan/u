@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adobe UI Developer 5 - Interview Questions</title>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/client-side-templates.js"></script>
+  <style>
+    :root {
+      --primary: #EB1000;
+      --primary-dark: #C00D00;
+      --bg: #FAFAFA;
+      --surface: #FFFFFF;
+      --border: #E0E0E0;
+      --text: #1A1A1A;
+      --text-secondary: #6E6E6E;
+      --success: #2E7D32;
+      --warning: #F57C00;
+      --danger: #C62828;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 24px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    h1 span {
+      color: var(--primary);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    select,
+    button {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-weight: 500;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      min-width: 120px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      background: #FAFAFA;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header:hover {
+      background: #F0F0F0;
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .section-meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .badge {
+      background: var(--primary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge.weight {
+      background: #333;
+    }
+
+    .section-body {
+      display: none;
+    }
+
+    .section-body.expanded {
+      display: block;
+    }
+
+    .question {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .question:last-child {
+      border-bottom: none;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 16px;
+    }
+
+    .question-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .question-id {
+      background: #F0F0F0;
+      color: var(--text-secondary);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .probability {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .probability-bar {
+      width: 60px;
+      height: 6px;
+      background: #E0E0E0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .probability-fill {
+      height: 100%;
+      background: var(--success);
+      border-radius: 3px;
+    }
+
+    .question-content {
+      font-size: 14px;
+    }
+
+    .rationale {
+      color: var(--text-secondary);
+      margin-top: 8px;
+      padding: 12px;
+      background: #FAFAFA;
+      border-radius: 6px;
+      border-left: 3px solid var(--primary);
+    }
+
+    .expand-btn {
+      background: none;
+      border: none;
+      padding: 8px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 18px;
+    }
+
+    .expand-btn:hover {
+      color: var(--text);
+    }
+
+    .answer-content {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .answer-content.visible {
+      display: block;
+    }
+
+    .toggle-answer {
+      background: #F0F0F0;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .toggle-answer:hover {
+      background: #E0E0E0;
+    }
+
+    pre {
+      background: #1A1A1A;
+      color: #E0E0E0;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 12px 0;
+    }
+
+    code {
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      font-size: 13px;
+    }
+
+    .inline-code {
+      background: #F0F0F0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background: #FAFAFA;
+      font-weight: 600;
+    }
+
+    .scorecard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+
+    .scorecard h2 {
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .score-row:last-child {
+      border-bottom: none;
+    }
+
+    @media (max-width: 600px) {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .section-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .question-header {
+        flex-direction: column;
+      }
+
+      .stats {
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container header-content">
+      <h1>Adobe <span>UI Developer 5</span> - Interview</h1>
+      <div class="controls">
+        <div class="filter-group">
+          <label for="sectionFilter">Section:</label>
+          <select id="sectionFilter" onchange="filterSections(this.value)">
+            <option value="all">All Sections</option>
+            <option value="react">React & Frontend</option>
+            <option value="ai">AI/LLM Integration</option>
+            <option value="leadership">Technical Leadership</option>
+            <option value="tooling">Developer Tooling</option>
+            <option value="api">API Integration</option>
+            <option value="design">Design Systems</option>
+            <option value="cloud">Cloud & DevOps</option>
+          </select>
+        </div>
+        <button onclick="expandAll()">Expand All</button>
+        <button onclick="collapseAll()">Collapse All</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Questions</div>
+        <div class="stat-value" id="totalQuestions">35</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Sections</div>
+        <div class="stat-value">7</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Est. Time</div>
+        <div class="stat-value">75-90 min</div>
+      </div>
+    </div>
+
+    <input type="text" class="search-box" id="searchBox" placeholder="Search questions..."
+      oninput="searchQuestions(this.value)">
+
+    <div id="interviewContent">
+      <!-- Questions will be rendered here by JavaScript -->
+    </div>
+
+    <div class="scorecard">
+      <h2>Interview Scorecard</h2>
+      <div class="score-row">
+        <span>React & Frontend Architecture</span>
+        <span>25%</span>
+      </div>
+      <div class="score-row">
+        <span>AI/LLM Integration & Agentic Dev</span>
+        <span>20%</span>
+      </div>
+      <div class="score-row">
+        <span>Technical Leadership</span>
+        <span>15%</span>
+      </div>
+      <div class="score-row">
+        <span>Developer Tooling & CLI</span>
+        <span>15%</span>
+      </div>
+      <div class="score-row">
+        <span>API Integration & Backend</span>
+        <span>10%</span>
+      </div>
+      <div class="score-row">
+        <span>Design Systems</span>
+        <span>10%</span>
+      </div>
+      <div class="score-row">
+        <span>Cloud & DevOps</span>
+        <span>5%</span>
+      </div>
+      <div class="score-row" style="font-weight: 700; background: #FAFAFA; margin: 12px -24px; padding: 12px 24px;">
+        <span>Decision Threshold: 4.0/5 = Strong Hire | 3.5/5 = Hire | 3.0/5 = Borderline</span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const interviewData = [
+      {
+        id: 'react-1',
+        section: 'React & Frontend Architecture',
+        weight: '25%',
+        questions: [
+          {
+            id: 'Q1',
+            title: 'Design a micro-frontend architecture for a large enterprise application.',
+            probability: 92,
+            rationale: '"Micro front ends" explicitly mentioned in JD. Candidate has Piral.js experience.',
+            answer: `For enterprise-scale micro-frontends, I recommend a Module Federation + Host/Remote pattern:
+
+**Architecture:**
+- **Shell Host App**: Orchestrates loading/removing remotes, shared dependencies, auth context
+- **Remote MFEs**: Independently deployable units (e.g., @company/order-management, @company/inventory)
+- **Shared Design System**: Exposed as shared dependency via Module Federation
+
+**Key Decisions:**
+\`\`\`javascript
+// Webpack Module Federation config
+new ModuleFederationPlugin({
+  name: 'host',
+  remotes: {
+    orderMgmt: 'orderMgmt@https://order.example.com/remoteEntry.js',
+    inventory: 'inventory@https://inventory.example.com/remoteEntry.js'
+  },
+  shared: ['react', 'react-dom', 'design-system']
+});
+\`\`\`
+
+**From My Experience (Albertsons/Nike):**
+- At Albertsons, we used Smart Monorepos (NX) with Module Federation
+- Shared component library distributed via private npm
+- Each MFE owned by separate team, deployed independently
+- Host app shell < 50KB initial load
+
+**Risks to Mitigate:**
+- Version skew: Lock shared deps at monorepo root
+- CSS collisions: Use CSS modules + BEM naming
+- Performance: Lazy-load remotes, prefetch on hover`
+          },
+          {
+            id: 'Q2',
+            title: 'How do you approach React performance optimization? Walk through your debugging methodology.',
+            probability: 88,
+            rationale: '"Performance, scalability" mentioned; React expert with 10+ years.',
+            answer: `**Debugging Methodology:**
+
+**1. Identify Symptoms:**
+\`\`\`javascript
+// React DevTools Profiler - capture 3 interactions
+// Look for: long bars, frequent re-renders, deep component trees
+\`\`\`
+
+**2. Common Culprits:**
+- Unnecessary re-renders: Missing memoization (React.memo, useMemo, useCallback)
+- Expensive computations in render
+- Unoptimized lists (missing keys, no virtualization)
+- Heavy context value recreation
+
+**3. Profiling Stack:**
+- Chrome DevTools Performance tab → Record → Interactions → Analyze
+- React DevTools Profiler → Who rendered why?
+- Why Did You Render plugin
+
+**4. Optimization Techniques:**
+
+| Problem | Solution |
+|---------|----------|
+| Re-renders | React.memo, useMemo for expensive deps |
+| Virtualization | react-window / react-virtual for 100+ items |
+| Code splitting | React.lazy + Suspense per route |
+| Bundle size | Tree-shaking, dynamic imports, bundle analysis |
+
+**5. Real Example from Google:**
+Optimized Pixel Buds web app — reduced initial render from 4.2s to 890ms by:
+- Code-splitting RFCOMM protocol handler
+- Lazy-loading non-critical features
+- Implementing requestIdleCallback for non-urgent updates`
+          },
+          {
+            id: 'Q3',
+            title: 'Explain your approach to state management in complex React applications.',
+            probability: 85,
+            rationale: '"State management" explicitly mentioned; candidate has used Redux extensively.',
+            answer: `**Decision Framework:**
+
+| Use Case | Solution |
+|----------|----------|
+| Server state, caching, sync | React Query / SWR |
+| Simple UI state, local component | useState/useReducer |
+| Medium complexity, cross-component | Zustand |
+| Large team, complex logic, time-travel | Redux Toolkit |
+
+**Zustand (Preferred for Most Cases):**
+\`\`\`javascript
+const useCartStore = create((set, get) => ({
+  items: [],
+  addItem: (product) => set(state => ({
+    items: [...state.items, product]
+  })),
+  total: () => get().items.reduce((sum, i) => sum + i.price, 0)
+}));
+\`\`\`
+
+**React Query for Server State:**
+\`\`\`javascript
+const { data, isLoading, error } = useQuery({
+  queryKey: ['products', category],
+  queryFn: () => fetchProducts(category),
+  staleTime: 5 * 60 * 1000,
+});
+\`\`\`
+
+**My Pattern at Scale:**
+- React Query for all API data (caching, background refetch, optimistic updates)
+- Zustand for UI state that doesn't need persistence
+- URL state for shareable filters/searches
+- Avoid Redux unless explicitly required`
+          },
+          {
+            id: 'Q4',
+            title: 'How do you implement and enforce accessibility (WCAG 2.1 AA) in React applications?',
+            probability: 78,
+            rationale: '"Accessibility standards" mentioned as nice-to-have; candidate explicitly lists WAI-ARIA expertise.',
+            answer: `**Enforcement Strategy:**
+
+**1. Code Level:**
+\`\`\`jsx
+// Semantic HTML first
+<button onClick={handleSave}>Save</button>  // ✅
+<div onClick={handleSave}>Save</div>       // ❌
+
+// ARIA when semantic fails
+<div role="dialog" aria-labelledby="title" aria-modal="true">
+  <h2 id="title">Confirm Action</h2>
+</div>
+\`\`\`
+
+**2. Keyboard Navigation:**
+Focus trap for modals, escape key handling, visible focus indicators.
+
+**3. Testing:**
+- axe-core in CI pipeline
+- screen reader testing (NVDA, VoiceOver)
+- Keyboard-only navigation testing
+
+**From Kaiser Permanente:**
+Redesigned "Managing Coverage & Costs" — improved accessibility compliance from 67% to 94%.`
+          },
+          {
+            id: 'Q5',
+            title: 'Describe your experience with TypeScript in large codebases. What patterns prevent type erosion?',
+            probability: 82,
+            rationale: '5+ years TypeScript; strong type discipline mentioned in context.',
+            answer: `**Preventing Type Erosion:**
+
+**1. Strict Mode Configuration:**
+\`\`\`json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true
+  }
+}
+\`\`\`
+
+**2. Discriminated Unions for State:**
+\`\`\`typescript
+type AsyncState<T> =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: T }
+  | { status: 'error'; error: Error };
+\`\`\`
+
+**3. Brand Types for Domain Values:**
+\`\`\`typescript
+type UserId = string & { readonly __brand: 'UserId' };
+type OrderId = string & { readonly __brand: 'OrderId' };
+
+function getUser(id: UserId): Promise<User> { ... }
+getUser('123' as OrderId); // ❌ Type error — prevented!
+\`\`\`
+
+**Pattern from Autodesk:**
+At Autodesk, we used TypeScript across 200K+ line codebase with 0 \`any\` policy.`
+          },
+          {
+            id: 'Q6',
+            title: 'How do you handle component library versioning and breaking changes across teams?',
+            probability: 72,
+            rationale: 'Component library experience mentioned in JD; candidate built reusable platforms.',
+            answer: `**Versioning Strategy:**
+
+**1. Semantic Versioning (SemVer):**
+- Major: Breaking changes
+- Minor: New features, backward compatible
+- Patch: Bug fixes, backward compatible
+
+**2. Deprecation Flow:**
+\`\`\`typescript
+/** @deprecated Use <Button variant="primary"> instead. Removed in v3. */
+const LegacyButton = ({ variant, ...props }) => {
+  console.warn('LegacyButton deprecated.');
+  return <Button variant="outline" {...props} />;
+};
+\`\`\`
+
+**3. Release Communication:**
+- Changelog: conventionalcommits.org format
+- Migration guides with before/after examples
+- Interactive playground (Storybook)`
+          },
+          {
+            id: 'Q7',
+            title: 'What patterns do you use to ensure consistent error handling across a React application?',
+            probability: 68,
+            rationale: 'Error handling in API integration mentioned in JD.',
+            answer: `**Error Handling Layers:**
+
+**1. API Layer (React Query pattern):**
+\`\`\`typescript
+const query = useQuery({
+  queryKey: ['product', id],
+  queryFn: () => api.getProduct(id),
+  retry: (failureCount, error) => {
+    if (error.status >= 400 && error.status < 500) return false;
+    return failureCount < 3;
+  },
+  onError: (error) => {
+    toast.error(\`Failed to load product: \${error.message}\`);
+  }
+});
+\`\`\`
+
+**2. Error Boundaries:**
+\`\`\`typescript
+class ErrorBoundary extends React.Component {
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return <FallbackUI error={this.state.error} />;
+    }
+    return this.props.children;
+  }
+}
+\`\`\``
+          },
+          {
+            id: 'Q8',
+            title: 'Describe your experience with Next.js and when you would choose it over vanilla React.',
+            probability: 75,
+            rationale: '4+ years Next.js experience in resume; candidate has worked with both.',
+            answer: `**Next.js Advantages:**
+
+| Scenario | Choose Next.js | Choose Vanilla React |
+|----------|----------------|---------------------|
+| SEO-critical pages | ✅ SSR/SSG | ❌ Client-only |
+| Static content | ✅ Static generation | ❌ Unnecessary complexity |
+| API routes needed | ✅ Built-in | ❌ Need separate server |
+| Real-time/websocket heavy | ❌ Add socket.io | ✅ More control |
+
+**My Experience:**
+At Nike and Albertsons, used Next.js for:
+- SSR product pages (SEO)
+- Static marketing pages (ISR)
+- API routes for BFF pattern
+
+**When NOT to use Next.js:**
+- Highly interactive dashboards (React + router simpler)
+- Micro-frontend architecture (separate deployments simpler)`
+          }
+        ]
+      },
+      {
+        id: 'ai',
+        section: 'AI/LLM Integration & Agentic Development',
+        weight: '20%',
+        questions: [
+          {
+            id: 'Q9',
+            title: 'Describe your experience with prompt engineering and AI tooling (Claude Code, GitHub Copilot, etc.).',
+            probability: 94,
+            rationale: 'AI/LLM APIs explicitly in JD as "Must Have"; candidate is AI-First Tech Lead.',
+            answer: `**AI Tooling Experience:**
+
+**1. Claude Code (Primary):**
+- Used for complex refactoring, test generation, documentation
+- Workflow: Claude → code review → iterate → test
+- Custom instructions: System-prompt engineering for project context
+
+**2. GitHub Copilot:**
+- Boilerplate generation, test stubs
+- Tab-complete for familiar patterns
+
+**3. Measuring AI Impact:**
+- 15% reduction in cloud compute (Albertsons)
+- 23% increase in code coverage (AI-assisted testing)
+- 10% reduction in bugs (AI-augmented review)
+
+**Prompt Engineering Patterns:**
+\`\`\`javascript
+const featurePrompt = \`
+Context: React component for \${useCase}
+Requirements:
+1. Must handle \${edgeCase1}
+2. Must integrate with \${apiName}
+3. Accessibility: WCAG 2.1 AA
+4. Performance: < 100ms interaction
+Code style: TypeScript strict, CSS modules
+\`;
+\`\`\``
+          },
+          {
+            id: 'Q10',
+            title: 'How would you design a template system that AI agents can use for rapid prototyping?',
+            probability: 86,
+            rationale: '"Design and build template systems for common prototyping patterns" explicitly in JD.',
+            answer: `**Template System Architecture:**
+
+\`\`\`
+┌─────────────────────────────────────────────────────┐
+│                  Template Registry                   │
+│  (npm registry + git-based version control)         │
+└─────────────────────────────────────────────────────┘
+           │                    │
+           ▼                    ▼
+┌──────────────────┐   ┌──────────────────────┐
+│   CLI Tool       │   │  AI Agent Interface  │
+│  (init, diff)    │   │  (read, suggest)     │
+└──────────────────┘   └──────────────────────┘
+           │                    │
+           ▼                    ▼
+┌─────────────────────────────────────────────────────┐
+│              Template Engine (Node.js)              │
+│  • Variable substitution                            │
+│  • Conditional logic                                │
+│  • Hook system (pre/post generate)                 │
+│  • AI context injection                             │
+└─────────────────────────────────────────────────────┘
+\`\`\`
+
+**Template YAML Schema:**
+\`\`\`yaml
+name: react-component
+version: 1.0.0
+variables:
+  - name: componentName
+    type: string
+    required: true
+    pattern: "^[A-Z][a-zA-Z0-9]*$"
+aiPrompt: |
+  When AI generates this component:
+  - Follow existing naming convention
+  - Inject accessibility attributes
+  - Add TypeScript strict types
+\`\`\``
+          },
+          {
+            id: 'Q11',
+            title: 'How would you design a CLI tool that scaffolding new projects? What features would you include?',
+            probability: 83,
+            rationale: '"Develop CLIs, build tools, scaffolding systems" explicitly in JD.',
+            answer: `**Scaffolding CLI Architecture:**
+
+**Core Commands:**
+\`\`\`bash
+# Project creation
+$ scaffold create project --template=react-enterprise --name=my-app
+
+# Adding features
+$ scaffold add feature --name=auth --provider=okta
+
+# Template management
+$ scaffold list templates
+\`\`\`
+
+**Features List:**
+| Feature | Description |
+|---------|-------------|
+| Template registry | Search, list, install templates |
+| Variable validation | Type-safe, pattern-matched inputs |
+| Pre/post hooks | Linting, testing, git init |
+| Dry-run mode | Preview without writing |
+| Diff output | Show what will change |
+| Rollback | Undo failed scaffolding |
+| Template diff | Compare template versions`
+
+          },
+          {
+            id: 'Q12',
+            title: 'Describe how you have integrated AI/LLM APIs (OpenAI, Anthropic) into applications.',
+            probability: 89,
+            rationale: '"Hands-on experience with AI/LLM APIs (OpenAI, Anthropic, etc.)" explicitly in JD.',
+            answer: `**AI Integration Patterns:**
+
+**1. API Abstraction Layer:**
+\`\`\`typescript
+interface LLMProvider {
+  complete(prompt: Prompt, options: Options): Promise<Response>;
+  stream(prompt: Prompt, options: Options): AsyncIterable<string>;
+}
+
+class AnthropicProvider implements LLMProvider {
+  constructor(private apiKey: string) {}
+
+  async complete(prompt: Prompt, options: Options): Promise<Response> {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': this.apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: options.model ?? 'claude-3-5-sonnet-20241022',
+        max_tokens: options.maxTokens ?? 1024,
+        messages: prompt.messages
+      })
+    });
+    return response.json();
+  }
+}
+\`\`\`
+
+**2. Retry & Rate Limiting:**
+\`\`\`typescript
+const withRetry = async <T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> => {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (error.status === 429) {
+        await sleep(error.retryAfter * 1000);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error('Max retry attempts exceeded');
+};
+\`\`\``
+          },
+          {
+            id: 'Q13',
+            title: 'How do you evaluate AI output quality and implement feedback loops for continuous improvement?',
+            probability: 72,
+            rationale: 'AI quality evaluation important for template systems in JD.',
+            answer: `**Quality Assurance Framework:**
+
+**1. Output Validation:**
+\`\`\`typescript
+interface ValidationResult {
+  valid: boolean;
+  score: number; // 0-100
+  issues: ValidationIssue[];
+}
+
+const validateOutput = async (
+  output: string,
+  criteria: QualityCriteria
+): Promise<ValidationResult> => {
+  const checks = [
+    syntaxCheck(output),
+    securityScan(output),
+    patternCheck(output, criteria.expectedPatterns),
+    boundsCheck(output, criteria)
+  ];
+  return aggregateResults(checks);
+};
+\`\`\`
+
+**2. Human-in-the-Loop Feedback:**
+\`\`\`typescript
+interface FeedbackEntry {
+  promptHash: string;
+  outputHash: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  feedback: string;
+  timestamp: Date;
+}
+\`\`\`
+
+**3. Metrics Dashboard:**
+- Token utilization efficiency
+- Validation pass rate by template type
+- Average regeneration attempts
+- Human feedback correlation`
+          },
+          {
+            id: 'Q14',
+            title: 'Describe your experience building AI agents or skills. What frameworks did you use?',
+            probability: 76,
+            rationale: '"Develop CLIs, build tools, scaffolding systems, and AI agents/skills" explicitly in JD.',
+            answer: `**Agent Architecture Patterns:**
+
+**Skill Definition:**
+\`\`\`typescript
+interface Skill {
+  name: string;
+  description: string;
+  triggers: string[];
+  parameters: Parameter[];
+  execute: (params: Params) => Promise<Result>;
+  rollback?: () => Promise<void>;
+}
+
+const codeReviewSkill: Skill = {
+  name: 'code-review',
+  description: 'Performs AI-augmented code review',
+  triggers: ['review', 'check', 'audit code'],
+  parameters: [
+    { name: 'files', type: 'array', required: true },
+    { name: 'focus', type: 'string', default: 'security,performance' }
+  ],
+  async execute({ files, focus }) {
+    const reviews = await Promise.all(
+      files.map(f => analyzeFile(f, focus))
+    );
+    return { summaries: reviews };
+  }
+};
+\`\`\`
+
+**Challenges & Solutions:**
+| Challenge | Solution |
+|-----------|----------|
+| Intent ambiguity | Multi-stage disambiguation |
+| Tool call failures | Exponential backoff + fallback |
+| Context length limits | Semantic chunking |
+| Hallucination risks | Output validation + human approval`
+          }
+        ]
+      },
+      {
+        id: 'leadership',
+        section: 'Technical Leadership',
+        weight: '15%',
+        questions: [
+          {
+            id: 'Q15',
+            title: 'How do you approach technical decision-making when there are competing architectural choices?',
+            probability: 90,
+            rationale: '"Technical leadership and architectural thinking" explicitly in JD.',
+            answer: `**Decision Framework:**
+
+**1. Frame the Problem:**
+\`\`\`
+Decision: [What are we deciding?]
+Success Criteria: [How do we measure success?]
+Constraints: [Timeline, team size, tech debt tolerance]
+Stakeholders: [Who cares and why?]
+\`\`\`
+
+**2. Option Generation + Evaluation Matrix:**
+| Criteria | Weight | Option A | Option B | Option C |
+|----------|--------|----------|----------|----------|
+| Development speed | 20% | 3 | 5 | 4 |
+| Maintainability | 25% | 4 | 4 | 3 |
+| Performance | 15% | 5 | 3 | 4 |
+| Team familiarity | 15% | 2 | 5 | 4 |
+
+**3. Real Example (Google - Pixel Buds):**
+\`\`\`
+Problem: Web Serial API for Bluetooth communication
+Decision: Option C (Web Serial + polling fallback)
+Rationale: Fastest path to working prototype, fallback for unsupported browsers
+Review: Re-evaluate when Safari adds Web Serial support
+\`\`\`
+`
+          },
+          {
+            id: 'Q16',
+            title: 'How do you mentor and elevate team members? Describe your mentorship approach.',
+            probability: 85,
+            rationale: '"Mentor developers" explicitly in JD; candidate led teams of 5 at Albertsons.',
+            answer: `**Mentorship Framework:**
+
+**1. Assessment (First 30 days):**
+- Technical depth (1-5 scale per competency)
+- Communication style
+- Career aspirations
+- Current blockers
+
+**2. Customized Growth Plans:**
+\`\`\`typescript
+interface GrowthPlan {
+  engineerId: string;
+  shortTerm: Goal[];    // 3 months
+  longTerm: Goal[];     // 12 months
+  checkInCadence: 'weekly' | 'biweekly' | 'monthly';
+}
+\`\`\`
+
+**3. Hands-On Learning Activities:**
+- Pair programming: Rotate driver/navigator roles
+- Code reviews with explanation: Not just "do this" but "why this pattern"
+- Architecture sessions: Whiteboard sessions for complex problems
+
+**4. From Albertsons:**
+Led team of 5 engineers. Introduced "architecture office hours" — open sessions for design questions. Results: 3 engineers promoted within 12 months, bug rate reduced 10%.`
+          },
+          {
+            id: 'Q17',
+            title: 'How do you handle technical conflicts within a team? Give an example.',
+            probability: 78,
+            rationale: 'Cross-functional collaboration important; candidate navigated conflicts at Google, Autodesk.',
+            answer: `**Conflict Resolution Framework:**
+
+**1. Establish Ground Rules:**
+- Assume positive intent
+- Focus on problems, not people
+- Data > opinions
+- Disagree and commit
+
+**2. Example Scenario (Autodesk):**
+\`\`\`
+Conflict: Two senior engineers disagree on API design for Crucible Data API
+Engineer A: RESTful with nested resources
+Engineer B: Flat REST with query params
+
+My Process:
+1. Invite both to present positions
+2. List constraints: timeline, team size, existing patterns
+3. Propose hybrid: flat REST, HATEOAS navigation
+4. Request buy-in or alternative
+\`\`\`
+
+**3. Decision Rights:**
+- Define success criteria for decision
+- Set deadline for resolution (48-72 hours)
+- If no consensus: Lead makes call with documented rationale`
+          },
+          {
+            id: 'Q18',
+            title: 'How do you balance hands-on coding with leadership responsibilities?',
+            probability: 82,
+            rationale: '"Balance hands-on development with team guidance" explicitly in JD.',
+            answer: `**Time Allocation Framework:**
+
+| Activity | Allocation |
+|----------|-----------|
+| Hands-on coding | 35% (Architecture, Reviews, Prototyping) |
+| Leadership & Mentorship | 25% (1:1s, pairing, team health) |
+| Cross-functional | 20% (Design reviews, planning) |
+| Documentation & process | 15% (ADRs, RFCs, team norms) |
+| Learning & growth | 5% (tech blogs, experimenting) |
+
+**Prioritization Strategies:**
+- **Delegate**: Boilerplate, routine features, documentation
+- **Protect**: Architecture decisions, code reviews, prototyping
+- **Eliminate**: Meetings without agenda, unnecessary status updates
+
+**Code Review as Leadership Tool:**
+Comments should educate, not just correct. "Consider using flatMap if you need to transform nested arrays" > "Wrong"`
+          },
+          {
+            id: 'Q19',
+            title: 'Describe a technically risky decision you made. How did you identify and mitigate the risks?',
+            probability: 75,
+            rationale: '"Identify technical risks, constraints, and dependencies early" explicitly in JD.',
+            answer: `**Risk Assessment Process:**
+
+**Technical Risks Matrix:**
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| Web Serial API not supported in Safari | High | Medium | RFCOMM fallback |
+| Team unfamiliar with RFCOMM protocol | Medium | High | Pairing sessions early |
+| Bluetooth latency causing UI jank | Low | High | Caching layer, optimistic UI |
+
+**Real Example (Google - Pixel Buds Web Serial):**
+\`\`\`
+Risk Identified: Web Serial API limited to Chromium browsers
+Impact: 40% potential users excluded
+
+Mitigation Plan:
+Phase 1: Ship Chromium-only (MVP)
+Phase 2: Explore Web Bluetooth as fallback
+Phase 3: Decision gate (6 months post-launch)
+\`\`\`
+
+**Risk Monitoring Dashboard:**
+- Feature flag: controlled rollout (5% → 20% → 50% → 100%)
+- Rollback plan: documented, tested
+- Observability: Sentry, Datadog, custom metrics`
+          }
+        ]
+      },
+      {
+        id: 'tooling',
+        section: 'Developer Tooling & CLI Systems',
+        weight: '15%',
+        questions: [
+          {
+            id: 'Q20',
+            title: 'How would you design a build system that supports multiple frontend frameworks in the same monorepo?',
+            probability: 79,
+            rationale: 'Build systems mentioned in JD; candidate has NX monorepo experience.',
+            answer: `**Monorepo Build Architecture:**
+
+\`\`\`
+workspace/
+├── apps/
+│   ├── react-app/        (React 18)
+│   ├── angular-app/      (Angular 17)
+│   └── svelte-app/       (Svelte)
+├── packages/
+│   ├── ui-components/    (React + Lit for cross-framework)
+│   ├── design-system/    (CSS variables, no framework)
+│   └── shared-utils/     (TypeScript, pure JS)
+└── nx.json
+\`\`\`
+
+**Framework-Agnostic Components:**
+\`\`\`typescript
+// packages/ui-components/src/Button/
+├── Button.tsx              // React implementation
+├── Button.angular.ts       // Angular wrapper
+├── Button.svelte.ts       // Svelte wrapper
+├── button.css             // Shared styles
+└── index.ts               // Framework-agnostic exports
+\`\`\`
+
+**Build Orchestration:**
+- Topological sort (respect dependencies)
+- Parallel builds (within constraints)
+- Shared deps singleton at host level`
+          },
+          {
+            id: 'Q21',
+            title: 'Describe your experience with testing strategies. How do you ensure adequate coverage?',
+            probability: 81,
+            rationale: 'Testing mentioned prominently in JD; candidate has TDD/BDD experience.',
+            answer: `**Testing Pyramid Strategy:**
+
+| Layer | % of tests | Speed |
+|-------|-----------|-------|
+| Unit | 60% | Fast |
+| Integration | 30% | Medium |
+| E2E | 10% | Slow |
+
+**Coverage Strategy:**
+\`\`\`json
+// jest.config.ts
+{
+  "coverageThreshold": {
+    "global": {
+      "branches": 70,
+      "functions": 70
+    },
+    "./src/features/checkout/": {
+      "branches": 90,
+      "statements": 90
+    }
+  }
+}
+\`\`\`
+
+**What to Test:**
+- ✅ Pure functions, hooks, utility functions
+- ✅ API handlers, component composition
+- ✅ Critical user flows (checkout, auth)
+
+**What NOT to Test:**
+- ❌ Implementation details
+- ❌ Third-party libraries
+- ❌ Trivial code (simple getters)
+
+**From Albertsons:**
+AI-augmented review workflows → 23% increase in code coverage, 10% reduction in bugs.`
+          },
+          {
+            id: 'Q22',
+            title: 'How do you design API integration patterns that are maintainable and testable?',
+            probability: 77,
+            rationale: '"API integration expertise (REST/GraphQL, authentication, rate limiting, error handling)" explicitly in JD.',
+            answer: `**API Integration Architecture:**
+
+**Client Layer:**
+\`\`\`typescript
+class ApiClient {
+  constructor(private baseUrl: string, private config: ApiConfig) {}
+
+  async get<T>(path: string, params?: Record<string, string>): Promise<T> {
+    const url = new URL(path, this.baseUrl);
+    url.search = new URLSearchParams(params);
+    return this.request<T>({ method: 'GET', url: url.toString() });
+  }
+}
+\`\`\`
+
+**Mock/Stub Layer (msw for integration tests):**
+\`\`\`typescript
+const handlers = [
+  rest.get('/api/products/:id', (req, res, ctx) => {
+    return res(
+      ctx.json({ id: req.params.id, name: 'Mock Product' }),
+      ctx.status(200)
+    );
+  })
+];
+\`\`\`
+
+**Rate Limiting Pattern:**
+\`\`\`typescript
+class RateLimitedClient {
+  private tokens = this.maxRequests;
+  setInterval(() => this.tokens = this.maxRequests, windowMs);
+
+  async request<T>(config: RequestConfig): Promise<T> {
+    while (this.tokens === 0) await sleep(100);
+    this.tokens--;
+    return this.client.request<T>(config);
+  }
+}
+\`\`\``
+          },
+          {
+            id: 'Q23',
+            title: 'Describe your experience designing and implementing developer experience improvements.',
+            probability: 73,
+            rationale: '"Improve onboarding flows and developer experience" explicitly in JD.',
+            answer: `**Developer Experience Framework:**
+
+**Onboarding Measurement:**
+- Time to First Commit (TTFC): Target < 4 hours
+- Time to First Build (TTFB): Target < 2 hours
+- Time to Production Confidence: Target < 2 weeks
+
+**Onboarding Improvements (Albertsons):**
+- Created "first PR" guide with step-by-step
+- Automated dev environment setup (one command)
+- Provisioned sandbox environments automatically
+
+**Results:**
+- TTFC reduced from 2 days to 3 hours
+- New hire productivity improved 40%
+
+**Local Dev Experience:**
+\`\`\`bash
+./scripts/setup-dev.sh
+# 1. Install dependencies
+# 2. Copy .env.example to .env
+# 3. Start docker-compose
+# 4. Run migrations
+# 5. Seed dev data
+# 6. Open browser
+\`\`\``
+          },
+          {
+            id: 'Q24',
+            title: 'What patterns do you use for building and publishing npm packages from a monorepo?',
+            probability: 68,
+            rationale: 'Package publishing and version management important for template/component library work.',
+            answer: `**Monorepo Package Publishing:**
+
+**Package Structure:**
+\`\`\`json
+{
+  "name": "@company/shared-utils",
+  "version": "2.3.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": "./dist/index.js",
+    "./hooks": "./dist/hooks/index.js"
+  }
+}
+\`\`\`
+
+**Semantic Versioning Rules:**
+\`\`\`javascript
+"releaseRules": [
+  {"breaking": true, "release": "major"},
+  {"type": "feat", "release": "minor"},
+  {"fix": true, "release": "patch"}
+]
+\`\`\`
+
+**Workspace Dependencies:**
+\`\`\`json
+{
+  "workspaces": {
+    "catalog": {
+      "react": "^18.2.0",
+      "typescript": "^5.0.0"
+    }
+  }
+}
+\`\`\``
+          }
+        ]
+      },
+      {
+        id: 'api',
+        section: 'API Integration & Backend',
+        weight: '10%',
+        questions: [
+          {
+            id: 'Q25',
+            title: 'Design a GraphQL API integration layer that handles caching, optimistic updates, and error states.',
+            probability: 80,
+            rationale: 'GraphQL explicitly mentioned in resume; strong API integration experience.',
+            answer: `**GraphQL Integration Architecture:**
+
+**Client Setup with React Query:**
+\`\`\`typescript
+const useGraphQL = <T>(
+  query: string,
+  variables?: Record<string, unknown>
+) => {
+  return useQuery({
+    queryKey: [query, variables],
+    queryFn: () => client.request<T>(query, variables),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+\`\`\`
+
+**Optimistic Updates:**
+\`\`\`typescript
+return useMutation({
+  mutationFn: (update) => client.request(UPDATE_MUTATION, { input: update }),
+
+  onMutate: async (newData) => {
+    await queryClient.cancelQueries(['products']);
+    const previous = queryClient.getQueryData(['products']);
+
+    queryClient.setQueryData(['products'], (old) => ({
+      ...old,
+      products: old.products.map(p =>
+        p.id === newData.id ? { ...p, ...newData } : p
+      )
+    }));
+
+    return { previous };
+  },
+
+  onError: (err, newData, context) => {
+    queryClient.setQueryData(['products'], context.previous);
+  }
+});
+\`\`\``
+          },
+          {
+            id: 'Q26',
+            title: 'How do you handle authentication flows and secure token management in SPAs?',
+            probability: 83,
+            rationale: 'Authentication explicitly in JD; candidate has OAuth/JWT experience.',
+            answer: `**Authentication Architecture:**
+
+**Token Storage Strategy:**
+- HttpOnly cookie (preferred) over localStorage
+- Server sets: \`Set-Cookie: access_token=xxx; HttpOnly; Secure; SameSite=Strict\`
+
+**Auth Interceptor:**
+\`\`\`typescript
+axios.interceptors.response.use(
+  response => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      try {
+        await authService.refreshToken();
+        return axios.request(error.config);
+      } catch {
+        authService.logout();
+        redirect('/login');
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+\`\`\`
+
+**Security Considerations:**
+✅ HttpOnly cookies for tokens (not localStorage)
+✅ PKCE for OAuth (no client secret in SPA)
+✅ CSRF protection via SameSite cookies
+✅ Token rotation on refresh
+❌ localStorage for tokens
+❌ Long-lived tokens`
+          },
+          {
+            id: 'Q27',
+            title: 'Describe your Node.js backend experience. What patterns do you use for scalable service architecture?',
+            probability: 71,
+            rationale: 'Node.js backend mentioned in JD; candidate has NestJS, Express experience.',
+            answer: `**Node.js Service Architecture:**
+
+**NestJS Application Structure:**
+\`\`\`typescript
+@Module({
+  imports: [ProductModule, UserModule, AuthModule],
+  controllers: [],
+  providers: []
+})
+export class AppModule {}
+\`\`\`
+
+**Circuit Breaker Pattern:**
+\`\`\`typescript
+class CircuitBreaker {
+  async execute<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.state === 'open') {
+      if (Date.now() - this.lastFailure > 30000) {
+        this.state = 'half-open';
+      } else {
+        throw new Error('Circuit open');
+      }
+    }
+    try {
+      const result = await fn();
+      this.onSuccess();
+      return result;
+    } catch (error) {
+      this.onFailure();
+      throw error;
+    }
+  }
+}
+\`\`\`
+
+**Message Queue Integration (Bull):**
+\`\`\`typescript
+const imageProcessQueue = new Queue('image-processing', { redis: { host: 'localhost', port: 6379 } });
+imageProcessQueue.process(async (job) => {
+  const { imageId, operations } = job.data;
+  return await processImage(imageId, operations);
+});
+\`\`\``
+          },
+          {
+            id: 'Q28',
+            title: 'How do you design for serverless architectures? What are the tradeoffs?',
+            probability: 67,
+            rationale: 'Serverless mentioned in JD as nice-to-have; candidate has Lambda experience.',
+            answer: `**Serverless Design Patterns:**
+
+**When to Use Serverless:**
+✅ Variable/unpredictable traffic
+✅ Infrequent/burst workloads
+✅ Cost-sensitive small services
+✅ Rapid iteration, independent deployment
+
+❌ Consistent high-traffic (reserved instances cheaper)
+❌ Long-running processes (> 15 min)
+❌ Complex state management
+
+**Lambda Handler:**
+\`\`\`typescript
+export const handler = middy(lambdaHandler)
+  .use(cors())
+  .use(errorHandler())
+  .use(jsonBodyParser())
+  .use(validator({ inputSchema }));
+
+async function lambdaHandler(event, context) {
+  const { userId } = event.pathParameters;
+  const product = await getProduct(userId);
+  return { statusCode: 200, body: JSON.stringify(product) };
+}
+\`\`\`
+
+**Cold Start Mitigation:**
+- Provisioned concurrency for critical functions
+- Keep warm with scheduled events (@rate(5 minutes))
+
+**Tradeoffs:**
+| Advantages | Disadvantages |
+|-----------|---------------|
+| No server management | Cold start latency |
+| Pay per invocation | Execution time limit (15 min) |
+| Auto-scaling | Debugging complexity |`
+          }
+        ]
+      },
+      {
+        id: 'design',
+        section: 'Design Systems & Component Libraries',
+        weight: '10%',
+        questions: [
+          {
+            id: 'Q29',
+            title: 'How do you design a design system that scales across multiple teams and products?',
+            probability: 76,
+            rationale: 'Design systems mentioned in JD; candidate built reusable platforms at Autodesk.',
+            answer: `**Design System Architecture:**
+
+**System Layers:**
+\`\`\`
+┌────────────────────────────────────────────┐
+│           Design Tokens (Foundation)        │
+│  colors, typography, spacing, shadows       │
+└────────────────────────────────────────────┘
+                     │
+┌────────────────────────────────────────────┐
+│              Base Components                │
+│  Button, Input, Select, Modal, etc.         │
+└────────────────────────────────────────────┘
+                     │
+┌────────────────────────────────────────────┐
+│           Composite Patterns                │
+│  FormField, DataTable, Card, etc.          │
+└────────────────────────────────────────────┘
+                     │
+┌────────────────────────────────────────────┐
+│              Templates                      │
+│  Page layouts, application shells          │
+└────────────────────────────────────────────┘
+\`\`\`
+
+**Token System:**
+\`\`\`css
+:root {
+  --color-primary-500: #3b82f6;
+  --color-action: var(--color-primary-500);
+  --font-size-base: 1rem;
+  --space-1: 0.25rem;
+}
+\`\`\`
+
+**Multi-Team Governance:**
+- Token ownership: Design team (single source of truth)
+- Component ownership: Rotating team ownership per component
+- Patterns: Architecture team reviews + approves`
+          },
+          {
+            id: 'Q30',
+            title: 'Describe your experience with Storybook or similar component documentation tools.',
+            probability: 70,
+            rationale: 'Component documentation important for developer experience.',
+            answer: `**Storybook Integration:**
+
+**Component Story Format (CSF3):**
+\`\`\`typescript
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from './Button';
+
+const meta: Meta<typeof Button> = {
+  component: Button,
+  tags: ['autodocs'],
+};
+
+export default meta;
+type Story = StoryObj<typeof Button>;
+
+export const Primary: Story = {
+  args: {
+    variant: 'primary',
+    children: 'Click me'
+  }
+};
+
+export const Loading: Story = {
+  args: {
+    variant: 'primary',
+    isLoading: true
+  }
+};
+\`\`\`
+
+**Storybook Addons:**
+- @storybook/addon-essentials
+- @storybook/addon-a11y (accessibility testing)
+- @storybook/addon-interactions
+- @chromaui/addon-design-assets (Figma integration)
+
+**Testing Integration:**
+\`\`\`typescript
+import { composeStories } from '@storybook/testing-react';
+const { Primary } = composeStories(stories);
+test('renders primary button', () => {
+  render(<Primary />);
+  expect(screen.getByRole('button')).toBeInTheDocument();
+});
+\`\`\``
+          },
+          {
+            id: 'Q31',
+            title: 'How do you approach responsive design and cross-browser compatibility testing?',
+            probability: 65,
+            rationale: 'Responsive design mentioned in JD; candidate has cross-browser experience.',
+            answer: `**Responsive Design Strategy:**
+
+**CSS Architecture (Mobile-first):**
+\`\`\`css
+.container { padding: var(--space-2); }
+
+@media (min-width: 768px) {
+  .container {
+    padding: var(--space-4);
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container { max-width: 960px; }
+}
+\`\`\`
+
+**Testing Matrix:**
+| Browser | Versions | Viewports |
+|---------|----------|-----------|
+| Chrome | Latest, -1 | 320, 768, 1440 |
+| Firefox | Latest, -1 | 320, 768, 1440 |
+| Safari | Latest | 320, 768, 1440 |
+
+**Tools:**
+\`\`\`bash
+# Playwright for cross-browser testing
+npx playwright install --with-deps chromium firefox webkit
+\`\`\`
+
+**Common Issues:**
+- Flexbox gap: Safari < 14.1 → use margin/hack
+- CSS Grid: IE11 → no support (progressive enhancement)
+- Backdrop-filter: Safari < 14 → solid fallback`
+          },
+          {
+            id: 'Q32',
+            title: 'What is your approach to Figma/design tool collaboration as a developer?',
+            probability: 62,
+            rationale: '"Design sensibility or experience with design tools (Figma)" mentioned in JD.',
+            answer: `**Developer-Designer Collaboration:**
+
+**Figma Workflow:**
+\`\`\`
+Designer creates → Developer inspects → Implementation → QA review
+\`\`\`
+
+**Inspect Mode Usage:**
+- CSS code (as starting point, not production-ready)
+- Color values (with opacity)
+- Spacing (margins, padding)
+- Typography specs
+
+**Token Synchronization:**
+\`\`\`typescript
+// figma-tokens.json → CSS variables
+const generateTokens = (figmaJson: FigmaTokens) => {
+  const css = \`:root {\\n\`;
+  for (const [key, value] of Object.entries(figmaJson.colors)) {
+    css += \`  --color-\${key}: \${value.value};\\n\`;
+  }
+  css += \`}\\n\`;
+  return css;
+};
+\`\`\`
+
+**Acceptable Tolerance:**
+- 2-4px for spacing
+- ±10% for font sizes
+- Exact match for colors (hex codes)`
+          }
+        ]
+      },
+      {
+        id: 'cloud',
+        section: 'Cloud & DevOps',
+        weight: '5%',
+        questions: [
+          {
+            id: 'Q33',
+            title: 'Describe your experience with CI/CD pipelines. What tools and patterns do you use?',
+            probability: 88,
+            rationale: 'CI/CD mentioned throughout JD; candidate has extensive AWS/DevOps experience.',
+            answer: `**CI/CD Pipeline Stages:**
+
+\`\`\`yaml
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm run lint && npm run type-check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm run test:ci
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/upload-artifact@v4
+        with: { name: dist, path: dist/ }
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - run: ./scripts/deploy.sh
+\`\`\`
+
+**Deployment Strategies:**
+\`\`\`typescript
+// Blue-green deployment
+const deploy = async (version: string) => {
+  await ecs.deploy({ taskDefinition: \`app:\${version}\`, cluster: 'production' });
+  const healthy = await runSmokeTests('https://green.app.com');
+  if (!healthy) { await ecs.rollback('green'); throw new Error(); }
+  await alb.switchTargetGroup('green');
+  await ecs.decommission('blue');
+};
+\`\`\`
+
+**From Albertsons:**
+AI-native CI/CD pipeline → 17% reduction in release time, 15% cloud compute savings.`
+          },
+          {
+            id: 'Q34',
+            title: 'How do you monitor frontend application health and performance?',
+            probability: 72,
+            rationale: '"Observability, and front-end performance monitoring" mentioned in JD.',
+            answer: `**Frontend Observability:**
+
+**Core Web Vitals (web-vitals library):**
+\`\`\`typescript
+import { onCLS, onFID, onLCP } from 'web-vitals';
+
+const sendToAnalytics = (metric: Metric) => {
+  navigator.sendBeacon('/analytics', JSON.stringify({
+    name: metric.name,
+    value: metric.value,
+    rating: metric.rating
+  }));
+};
+
+onCLS(sendToAnalytics);
+onLCP(sendToAnalytics);
+onFID(sendToAnalytics);
+\`\`\`
+
+**Error Tracking (Sentry):**
+\`\`\`typescript
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  integrations: [
+    new Sentry.BrowserTracing(),
+    new Sentry.Replay()
+  ],
+  tracesSampleRate: 0.1
+});
+
+<Sentry.ErrorBoundary fallback={<ErrorFallback />}>
+  <App />
+</Sentry.ErrorBoundary>
+\`\`\`
+
+**Metrics Dashboard:**
+- Core Web Vitals (LCP, FID, CLS)
+- JS bundle size (by route)
+- Error rate by type
+- API latency (p50, p95, p99)`
+          },
+          {
+            id: 'Q35',
+            title: 'Describe your AWS experience. What services do you use and for what purposes?',
+            probability: 78,
+            rationale: 'AWS explicitly in JD; candidate has extensive AWS experience.',
+            answer: `**AWS Service Architecture:**
+
+| Category | Services |
+|----------|----------|
+| Compute | Lambda, EC2, ECS/Fargate |
+| Storage | S3, EFS, RDS, ElastiCache |
+| Networking | CloudFront, API Gateway, Route53 |
+| CI/CD | CodePipeline, CodeBuild, CodeDeploy |
+| Monitoring | CloudWatch, X-Ray, CloudTrail |
+
+**Lambda Architecture (Kaiser Permanente):**
+\`\`\`yaml
+service: cost-management
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 256
+  timeout: 10
+functions:
+  getProducts:
+    handler: handlers/getProducts.handler
+    events:
+      - http:
+          path: /products
+          method: get
+\`\`\`
+
+**S3 + CloudFront for Static Assets:**
+\`\`\`yaml
+WebsiteBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    WebsiteConfiguration:
+      IndexDocument: index.html
+      ErrorDocument: error.html
+
+CloudFrontDistribution:
+  Type: AWS::CloudFront::Distribution
+  Properties:
+    DefaultRootObject: index.html
+\`\`\``
+          }
+        ]
+      }
+    ];
+
+    // Render functions
+    function renderQuestions() {
+      const container = document.getElementById('interviewContent');
+      container.innerHTML = interviewData.map(section => `
+                <div class="section" data-section="${section.id}">
+                    <div class="section-header" onclick="toggleSection('${section.id}')">
+                        <div class="section-title">
+                            ${section.section}
+                            <span class="badge weight">${section.weight}</span>
+                        </div>
+                        <div class="section-meta">
+                            <span class="badge">${section.questions.length} Qs</span>
+                            <button class="expand-btn" id="btn-${section.id}">▼</button>
+                        </div>
+                    </div>
+                    <div class="section-body" id="body-${section.id}">
+                        ${section.questions.map(q => `
+                            <div class="question" data-question-id="${q.id}">
+                                <div class="question-header">
+                                    <div>
+                                        <span class="question-id">${q.id}</span>
+                                        <span class="question-title">${q.title}</span>
+                                    </div>
+                                    <div class="probability">
+                                        <span>${q.probability}%</span>
+                                        <div class="probability-bar">
+                                            <div class="probability-fill" style="width: ${q.probability}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="question-content">
+                                    <div class="rationale"><strong>Why this question:</strong> ${q.rationale}</div>
+                                    <button class="toggle-answer" onclick="toggleAnswer(this)">Show Answer</button>
+                                    <div class="answer-content">${formatAnswer(q.answer)}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+      document.getElementById('totalQuestions').textContent =
+        interviewData.reduce((sum, s) => sum + s.questions.length, 0);
+    }
+
+    function formatAnswer(answer) {
+      // Convert markdown-style formatting to HTML
+      return answer
+        .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+        .replace(/`([^`]+)`/g, '<span class="inline-code">$1</span>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\|([^|]+)\|([^|]+)\|([^|]+)\|/g, '<tr><td>$1</td><td>$2</td><td>$3</td></tr>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function toggleSection(sectionId) {
+      const body = document.getElementById(`body-${sectionId}`);
+      const btn = document.getElementById(`btn-${sectionId}`);
+      body.classList.toggle('expanded');
+      btn.textContent = body.classList.contains('expanded') ? '▲' : '▼';
+    }
+
+    function toggleAnswer(btn) {
+      const content = btn.nextElementSibling;
+      content.classList.toggle('visible');
+      btn.textContent = content.classList.contains('visible') ? 'Hide Answer' : 'Show Answer';
+    }
+
+    function expandAll() {
+      document.querySelectorAll('.section-body').forEach(b => b.classList.add('expanded'));
+      document.querySelectorAll('.expand-btn').forEach(b => b.textContent = '▲');
+    }
+
+    function collapseAll() {
+      document.querySelectorAll('.section-body').forEach(b => b.classList.remove('expanded'));
+      document.querySelectorAll('.expand-btn').forEach(b => b.textContent = '▼');
+    }
+
+    function filterSections(value) {
+      if (value === 'all') {
+        document.querySelectorAll('.section').forEach(s => s.style.display = '');
+      } else {
+        document.querySelectorAll('.section').forEach(s => {
+          s.style.display = s.dataset.section === value ? '' : 'none';
+        });
+      }
+    }
+
+    function searchQuestions(query) {
+      const lower = query.toLowerCase();
+      document.querySelectorAll('.question').forEach(q => {
+        const text = q.textContent.toLowerCase();
+        q.style.display = text.includes(lower) ? '' : 'none';
+      });
+    }
+
+    // Initialize
+    renderQuestions();
+  </script>
+</body>
+
+</html>
